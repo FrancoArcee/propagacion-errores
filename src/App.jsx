@@ -1,8 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Presentacion from './pages/Presentacion'
-import Teoria from './pages/Teoria'
-import Practica from './pages/Practica'
+import Resolucion from './pages/Resolucion'
 import Cierre from './pages/Cierre'
 
 function App() {
@@ -11,8 +10,8 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Presentacion />} />
-          <Route path="/teoria" element={<Teoria />} />
-          <Route path="/practica" element={<Practica />} />
+          <Route path="/presentacion" element={<Presentacion />} />
+          <Route path="/resolucion" element={<Resolucion />} />
           <Route path="/cierre" element={<Cierre />} />
         </Routes>
       </Layout>
