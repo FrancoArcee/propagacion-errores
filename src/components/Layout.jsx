@@ -20,7 +20,7 @@ function Layout({ children }) {
             Inicio
           </NavLink>
           <NavLink to="/resolucion" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-            Resolucion
+            Resolución
           </NavLink>
           <NavLink to="/cierre" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Cierre
