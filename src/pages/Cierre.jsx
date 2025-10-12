@@ -7,73 +7,81 @@ const Cierre = () => {
         
         {/* Título Principal */}
         <div className="header-section">
-          <h1 className="main-title">Utilidad</h1>
-          <p className="subtitle">Método de la Potencia en el mundo real</p>
+          <h1 className="main-title">Tecnologías Utilizadas en la Resolución</h1>
+          <p className="subtitle">Librerías, Lenguajes e Inteligencia Artificial</p>
         </div>
 
-        {/* Ejemplos de la vida real */}
+        {/* Lenguajes y Frameworks */}
         <section className="examples-section">
           <h2 className="section-title">
-            Ejemplos de la vida real
+            Lenguajes y Frameworks
           </h2>
           
           <div className="examples-grid-cierre">
             <div className="example-card google">
-              <div className="card-icon">🔍</div>
-              <h3>Google PageRank</h3>
+              <div className="card-icon">💻</div>
+              <h3>JavaScript (JS)</h3>
+              <p>Utilizado para implementar la lógica del algoritmo de mínimos cuadrados.</p>
             </div>
 
             <div className="example-card social">
-              <div className="card-icon">📱</div>
-              <h3>Redes Sociales</h3>
+              <div className="card-icon">⚛️</div>
+              <h3>React</h3>
+              <p>Empleado para construir la interfaz de usuario, gestionar el estado de los datos y la interactividad de la aplicación.</p>
             </div>
 
             <div className="example-card engineering">
-              <div className="card-icon">🏗️</div>
-              <h3>Vibraciones en Ingeniería</h3>
+              <div className="card-icon">🎨</div>
+              <h3>CSS / HTML</h3>
+              <p>Utilizados para estructurar la página y aplicar estilos visuales.</p>
             </div>
           </div>
         </section>
 
-        {/* Ventajas y Limitaciones */}
+        {/* Librerías y Herramientas Específicas */}
         <div className="analysis-grid">
           
-          {/* Ventajas */}
+          {/* Librerías */}
           <section className="advantages-section">
             <h2 className="section-title">
-              Ventajas
+              Librerías
             </h2>
             
             <div className="advantages-list">
               <div className="advantage-item">
-                <h3>Simplicidad</h3>
+                <h3>XLSX</h3>
+                <p>Librería utilizada para la lectura y el procesamiento del archivo de datos adjunto (formato Excel/CSV), permitiendo la importación al entorno JS.</p>
               </div>
               
               <div className="advantage-item">
-                <h3>Escalabilidad</h3>
+                <h3>Plotly.js</h3>
+                <p>Librería de visualización de datos para generar el gráfico de dispersión y trazar las diferentes curvas de regresión (polinómica, lineal, etc.).</p>
+              </div>
+              
+              <div className="advantage-item">
+                <h3>React-Bootstrap</h3>
+                <p>Componentes utilizados para un diseño web responsivo y limpio (botones, contenedores, etc.).</p>
               </div>
             </div>
           </section>
 
-          {/* Limitaciones */}
+          {/* Inteligencia Artificial */}
           <section className="limitations-section">
             <h2 className="section-title">
-              Limitaciones
+              Inteligencia Artificial
             </h2>
             
             <div className="limitations-list">
-              <div className="limitation-item">No es práctico a mano</div>
-              <div className="limitation-item">Solo matrices cuadradas</div>
-              <div className="limitation-item">Convergencia lenta</div>
-              <div className="limitation-item">Vector inicial crítico</div>
+              <div className="limitation-item">
+                <h3>ChatGPT (OpenAI)</h3>
+                <p>Utilizada para realizar el código</p>
+                <h3>Excel con Copilot</h3>
+                <p>Verificación de los gráficos obtenidos</p>
+              </div>
             </div>
           </section>
         </div>
 
-        {/* Conclusión */}
-        <section className="conclusion-section">
-          <h2>¡Gracias por su atención!</h2>
-        </section>
       </div>
     </div>
   );

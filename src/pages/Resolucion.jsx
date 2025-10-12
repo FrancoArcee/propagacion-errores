@@ -9,6 +9,8 @@ const Resolucion = () => {
   const [fitType, setFitType] = useState("exponencial");
   const [useClusters, setUseClusters] = useState(false);
   const [results, setResults] = useState(null);
+  const [bestFit, setBestFit] = useState(null);
+
 
   useEffect(() => {
     loadData();
@@ -73,6 +75,27 @@ const Resolucion = () => {
       setResults({ clear: clearResult, cloudy: cloudyResult });
     }
   };
+
+  const findBestRegression = () => {
+    if (!results || !results.overall) return;
+
+    const r2Map = {
+      lineal: performRegression(data, "lineal")?.r2 ?? 0,
+      exponencial: performRegression(data, "exponencial")?.r2 ?? 0,
+      potencial: performRegression(data, "potencial")?.r2 ?? 0,
+      polinomico: performRegression(data, "polinomico")?.r2 ?? 0,
+    };
+
+    console.log("R² values:", r2Map);
+  
+    const bestType = Object.keys(r2Map).reduce((a, b) =>
+      r2Map[a] >= r2Map[b] ? a : b
+    );
+
+    const best = performRegression(data, bestType);
+    setBestFit({ ...best, type: bestType });
+  };
+
 
   const performRegression = (dataset, type) => {
     const n = dataset.length;
@@ -221,7 +244,7 @@ const Resolucion = () => {
     return ssTotal === 0 ? 0 : 1 - ssResidual / ssTotal;
   };
 
-  const formatR2 = (r2) => r2.toFixed(3);
+  const formatR2 = (r2) => r2.toFixed(4);
 
   const getR2Color = (r2) => {
     // Colorea de rojo (malo) a verde (bueno) según el valor de R²
@@ -314,6 +337,12 @@ const Resolucion = () => {
         </ButtonGroup>
       </div>
 
+      <div className="text-center mb-3">
+        <Button variant="success" onClick={findBestRegression}>
+          Calcular mejor regresión
+        </Button>
+      </div>
+
       {results?.overall && !useClusters && (
         <div className="text-center mt-3">
           <h5>
@@ -359,8 +388,8 @@ const Resolucion = () => {
           paper_bgcolor: "#222",
           plot_bgcolor: "#222",
           font: { color: "#fff" },
-          xaxis: { title: "Irradiancia (W/m²)" },
-          yaxis: { title: "Potencia (kW)" },
+          xaxis: { title: { text: "Irradiancia (W/m²)", font: { size: 18 } } },
+          yaxis: { title: {text: "Potencia (kW)", font: { size: 18 } }},
           legend: { orientation: "h", y: -0.2 },
           margin: { t: 40, l: 60, r: 30, b: 60 },
           height: 500,
@@ -368,6 +397,35 @@ const Resolucion = () => {
         config={{ responsive: true, displaylogo: false }}
         style={{ width: "100%", height: "500px" }}
       />
+      {bestFit && (
+  <div className="mt-4 text-center">
+    <h4>🏆 Mejor regresión: {bestFit.type.toUpperCase()}</h4>
+    <p>
+      <strong>R² ajustado:</strong> {formatR2(bestFit.adjustedR2)}
+    </p>
+    <p>
+      <strong>Función:</strong>{" "}
+      {bestFit.type === "lineal"
+        ? `y = ${bestFit.coefficients[0].toFixed(4)}·x + ${bestFit.coefficients[1].toFixed(4)}`
+        : bestFit.type === "exponencial"
+        ? `y = ${bestFit.coefficients[0].toFixed(4)}·e^(${bestFit.coefficients[1].toFixed(4)}·x)`
+        : bestFit.type === "potencial"
+        ? `y = ${bestFit.coefficients[0].toFixed(4)}·x^(${bestFit.coefficients[1].toFixed(4)})`
+        : `y = ${bestFit.coefficients[0].toFixed(4)} + ${bestFit.coefficients[1].toFixed(4)}·x + ${bestFit.coefficients[2].toFixed(6)}·x²`}
+    </p>
+    <p>
+      <strong>Coeficientes:</strong> [
+          {
+              [
+                  bestFit.coefficients[0].toFixed(4), 
+                  bestFit.coefficients[1].toFixed(4), 
+                  bestFit.coefficients[2].toFixed(6)
+              ].join(", ")
+          }
+      ]
+    </p>
+  </div>
+)}
     </div>
   );
 };
