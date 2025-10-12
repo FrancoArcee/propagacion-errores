@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import Presentacion from './pages/Presentacion'
+import Introduccion from './pages/Introduccion'
 import Resolucion from './pages/Resolucion'
 import Cierre from './pages/Cierre'
 
@@ -9,8 +9,8 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Presentacion />} />
-          <Route path="/presentacion" element={<Presentacion />} />
+          <Route path="/" element={<Introduccion />} />
+          <Route path="/introduccion" element={<Introduccion />} />
           <Route path="/resolucion" element={<Resolucion />} />
           <Route path="/cierre" element={<Cierre />} />
         </Routes>

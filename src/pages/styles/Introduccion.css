@@ -1,0 +1,240 @@
+.intro-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.intro-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.intro-title {
+  font-size: 2.5rem;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.intro-subtitle {
+  font-size: 1.1rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.intro-section {
+  margin-bottom: 2.5rem;
+}
+
+.intro-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.concepts-title {
+  font-size: 2rem;
+  color: #2d3748;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.concept-card {
+  border-radius: 16px;
+  padding: 2rem;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.concept-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.card-fotovoltaica {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.card-irradiancia {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card-insolacion {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.card-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  opacity: 0.95;
+}
+
+.card-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.importance-section {
+  margin: 3rem 0;
+}
+
+.importance-box {
+  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 5px 20px rgba(253, 203, 110, 0.3);
+}
+
+.importance-title {
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.regression-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.regression-list li {
+  font-size: 1.1rem;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+  background: #f7fafc;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: background 0.3s ease;
+}
+
+.regression-list li:hover {
+  background: #edf2f7;
+}
+
+.bullet {
+  font-size: 1.3rem;
+}
+
+.objective-section {
+  margin: 3rem 0;
+}
+
+.objective-box {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 5px 20px rgba(168, 237, 234, 0.3);
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.btn-next {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+.btn-next:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .intro-container {
+    padding: 1.5rem;
+  }
+
+  .intro-title {
+    font-size: 2rem;
+  }
+
+  .concepts-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .intro-text {
+    font-size: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+  }
+}
