@@ -33,13 +33,10 @@ function Introduccion() {
 
         <div className="concept-card card-insolacion">
           <div className="card-icon">⚡</div>
-          <h3 className="card-title">Insolación</h3>
-          <p className="card-description">
-            <strong>Energía solar total acumulada</strong> durante un período de tiempo.
-          </p>
+          <h3 className="card-title">Potencia Fotovoltaica</h3>
           <div className="card-detail">
             <span className="detail-label">Unidad de medida:</span>
-            <span className="detail-value">kWh/m² por día</span>
+            <span className="detail-value">kW</span>
           </div>
         </div>
       </div>
