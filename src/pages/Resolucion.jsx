@@ -43,24 +43,9 @@ const Resolucion = () => {
       setData(parsed);
     } catch (error) {
       console.error("Error loading data:", error);
-      generateSampleData();
     }
   };
-
-  const generateSampleData = () => {
-    const sample = [];
-    for (let i = 0; i < 50; i++) {
-      const irr = 100 + Math.random() * 900;
-      const noise = (Math.random() - 0.5) * 5;
-      sample.push({
-        irradiance: irr,
-        power: 0.005 * irr + 0.000003 * irr * irr + noise,
-        skyState: Math.random() > 0.5 ? "clear" : "cloudy",
-      });
-    }
-    setData(sample);
-  };
-
+  
   const calculateRegression = () => {
     if (!useClusters) {
       const result = performRegression(data, fitType);

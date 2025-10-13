@@ -82,6 +82,23 @@ const Cierre = () => {
           </section>
         </div>
 
+        {/* Conclusión */}
+        <section className="conclusion-section">
+          <h2 className="section-title">Conclusión</h2>
+          <p>
+            Tiene sentido que el ajuste obtenido se asemeje a una función lineal, ya que la fórmula de la potencia fotovoltaica es <br/><strong>P = I × <span style={{fontStyle: "italic"}}>&eta;</span> × A</strong>, donde:
+          </p>
+          <ul className="text-start">
+            <li><strong>P</strong>: Potencia generada por el panel fotovoltaico.</li>
+            <li><strong>I</strong>: Irradiancia solar incidente sobre el panel.</li>
+            <li><strong><span style={{fontStyle: "italic"}}>&eta;</span></strong>: Rendimiento del panel.</li>
+            <li><strong>A</strong>: Área del panel fotovoltaico.</li>
+          </ul>
+          <p>
+            Como todos los factores (rendimiento y área) suelen ser constantes para un mismo panel, la relación entre la potencia y la irradiancia es directamente proporcional, lo que justifica el comportamiento lineal observado en el ajuste.
+          </p>
+        </section>
+
       </div>
     </div>
   );
