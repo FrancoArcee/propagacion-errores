@@ -1,232 +1,94 @@
-/* Layout general */
-.page {
-  font-family: "Inter", system-ui, sans-serif;
-  padding: 28px;
-  max-width: 980px;
-  margin: 0 auto;
-  color: #222;
-  background: var(--color-background);
-}
-
-/* tarjeta base */
-.card {
-  background: #fff;
-  border-radius: 12px;
+.practica-container {
   padding: 20px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  margin-bottom: 22px;
-  border-left: 8px solid var(--color-primary);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* calculadora: centrado vertical y horizontal del contenido */
-.card.calculator {
-  min-height: 420px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* contenido interno de la calculadora */
-.calculator-inner {
-  width: 100%;
-  max-width: 860px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-}
-
-/* títulos en las cards */
-.card-title {
-  color: var(--color-primary);
-  font-size: 35px;
-  width: 700;
-  margin: 0 0 6px 0;
-  text-align: center;
-}
-
-/* controles */
-.controls-row {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.select, .input-small {
-  margin-left: 8px;
-  padding: 6px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-/* area matriz + vector centrada */
-.matrix-area {
-  display: flex;
-  gap: 28px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-/* tabla de matriz */
-.matrix-table {
-  border-collapse: separate;
-  border-spacing: 6px;
+  max-width: 800px;
   margin: 0 auto;
+  font-family: "Poppins", sans-serif;
+  background-color: var(--color-background);
 }
 
-/* inputs de celda */
-.cell-input {
-  width: 72px;
-  padding: 6px;
+.practica-container h1 {
+  color: var(--color-primary);
   text-align: center;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 14px;
+  margin-bottom: 20px;
 }
 
-/* caja vector */
-.vector-box {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
+.practica-container p {
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
-/* opciones vector */
-.vector-options {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
+.card {
+  background-color: var(--color-card-bg);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* fila para vector custom */
-.custom-vector-row {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
+.card h2 {
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-primary);
+  padding-bottom: 5px;
 }
 
-/* boton centrado */
-.center-btn {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: 6px;
-}
-
-/* botones principales */
-.btn {
-  background: var(--color-primary);
+.toggle-button {
+  padding: 10px 20px;
+  margin-top: 10px;
   color: var(--color-text);
   border: none;
-  padding: 10px 24px;
-  border-radius: 10px;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s;
 }
 
-.btn:hover {
-  background: var(--color-secondary);
+.toggle-button.open {
+  background-color: var(--color-button-close);
 }
 
-/* subtítulos */
-.subtitle {
-  margin-bottom: 8px;
-  font-weight: 600;
-  text-align: center;
+.toggle-button.closed {
+  background-color: var(--color-button-open);
 }
 
-/* iteraciones / resultados */
-.iter-block {
-  margin-top: 10px;
+.resolution-container {
+  background-color: var(--color-resolution-bg);
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 5px;
+  border-top: 1px dashed #ccc;
+}
+
+.step {
+  background-color: var(--color-step-bg);
   padding: 10px;
-  background: #fbfbff;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  width: 100%;
-  box-sizing: border-box;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--color-step-border);
+  border-radius: 5px;
 }
 
-.iter-math {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 6px;
+.step p {
+  margin: 5px 0;
 }
 
-/* caja de resolución de resultados */
-.resolution-box {
-  margin-top: 20px;
-  width: 100%;
-}
-
-.resolution {
-  margin-top: 16px;
-  text-align: center;
-}
-
-.centered-math {
-  margin: 12px 0;
-  text-align: center;
-}
-
-.final-conclusion {
-  margin-top: 16px;
-  background: var(--color-tertiary);
-  color: black !important;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--color-accent);
-}
-
-/* ajustes de la sección de ejemplo */
-.example-card {
-  text-align: center;
-  color: black !important; 
-}
-
-.example-card p {
-  margin: 6px 0;
-  color: black !important;
-}
-
-/* inputs vectoriales */
-.vector-cell { 
-  width: 64px; 
-  padding: 6px; 
-  text-align: center;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-}
-
-.example-enunciado {
-  text-align: center;
+.step .explicacion {
   font-style: italic;
-  margin-bottom: 12px;
-  color: black !important;
+  color: #555;
 }
 
-/* Scroll horizontal para KaTeX en móviles */
-@media (max-width: 720px) {
-  .example-enunciado {
-    color: black !important; /* asegura que el texto siga negro */
-  }
+.math-block {
+  margin-top: 10px;
+  overflow-x: auto;
+}
 
-  .example-enunciado .katex-display {
-    overflow-x: auto;           /* habilita scroll horizontal */
-    -webkit-overflow-scrolling: touch; /* suaviza en iOS */
-    max-width: 100%;            /* no excede el ancho de la card */
-    display: block;             /* asegura que sea bloque y scrollable */
-    box-sizing: border-box;
-  }
+.resultado {
+  background-color: var(--color-tertiary);
+  color: var(--color-text);
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.resultado h3 {
+  color: var(--color-accent);
+  margin-bottom: 10px;
 }

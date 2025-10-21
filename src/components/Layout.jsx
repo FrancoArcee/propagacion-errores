@@ -7,7 +7,7 @@ function Layout({ children }) {
       <header className="header">
         <div className="logo-section">
           <img src="./logo.png" alt="Logo" className="logo" />
-          <span className="group-name">Goodfellas - Minimos Cuadrados - ej.1</span>
+          <span className="group-name">Goodfellas - Taylor</span>
         </div>
         <input type="checkbox" id="menu-toggle" className="menu-toggle" />
         <label htmlFor="menu-toggle" className="menu-btn">
@@ -19,11 +19,14 @@ function Layout({ children }) {
           <NavLink to="/" end className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Inicio
           </NavLink>
-          <NavLink to="/resolucion" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-            Resolución
+          <NavLink to="/teoria" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Teoría
           </NavLink>
-          <NavLink to="/cierre" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-            Cierre
+          <NavLink to="/practica" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Práctica
+          </NavLink>
+          <NavLink to="/calculadora" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Calculadora
           </NavLink>
         </nav>
       </header>

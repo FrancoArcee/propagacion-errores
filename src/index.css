@@ -6,6 +6,12 @@
 
   --color-text: #ffffff;
   --color-background: #f9f9f9;
+  --color-card-bg: #e9f7ff;
+  --color-step-bg: #ffffff;
+  --color-step-border: var(--color-primary);
+  --color-resolution-bg: #f8f9fa;
+  --color-button-open: #28a745;
+  --color-button-close: #dc3545;
 }
 
 body {
