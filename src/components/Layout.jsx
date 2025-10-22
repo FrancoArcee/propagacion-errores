@@ -7,7 +7,7 @@ function Layout({ children }) {
       <header className="header">
         <div className="logo-section">
           <img src="./logo.png" alt="Logo" className="logo" />
-          <span className="group-name">Goodfellas - Taylor</span>
+          <span className="group-name">Goodfellas - Método de Taylor para PVI</span>
         </div>
         <input type="checkbox" id="menu-toggle" className="menu-toggle" />
         <label htmlFor="menu-toggle" className="menu-btn">
@@ -17,16 +17,16 @@ function Layout({ children }) {
         </label>
         <nav className="nav">
           <NavLink to="/" end className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-            Inicio
-          </NavLink>
-          <NavLink to="/teoria" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Teoría
           </NavLink>
+          <NavLink to="/teoria" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Calculadora
+          </NavLink>
           <NavLink to="/practica" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-            Práctica
+            Ejercicio Aplicado
           </NavLink>
           <NavLink to="/calculadora" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-            Calculadora
+            Chat Interactivo
           </NavLink>
         </nav>
       </header>
