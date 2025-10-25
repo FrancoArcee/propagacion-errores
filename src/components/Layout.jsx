@@ -19,10 +19,10 @@ function Layout({ children }) {
           <NavLink to="/" end className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Teoría
           </NavLink>
-          <NavLink to="/teoria" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+          <NavLink to="/practica" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Calculadora
           </NavLink>
-          <NavLink to="/practica" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+          <NavLink to="/aplicacion" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Ejercicio Aplicado
           </NavLink>
           <NavLink to="/calculadora" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
