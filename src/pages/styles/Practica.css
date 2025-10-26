@@ -1,9 +1,10 @@
 .practica-container {
   padding: 20px;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   font-family: "Poppins", sans-serif;
   background-color: var(--color-background);
+  margin-top: 30px;
 }
 
 .practica-container h1 {
