@@ -17,7 +17,7 @@ function Layout({ children }) {
         </label>
         <nav className="nav">
           <NavLink to="/" end className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-            Teoría
+            Introducción
           </NavLink>
           <NavLink to="/practica" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
             Calculadora
