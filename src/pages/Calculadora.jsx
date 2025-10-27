@@ -8,36 +8,35 @@ function Calculadora() {
   const [response, setResponse] = useState('La respuesta aparecerá aquí.');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Prompt mejorado para que el modelo use delimitadores LaTeX
+  // 🧠 Prompt configurado para que el modelo devuelva LaTeX limpio
   const systemPrompt = `
-Eres un profesor de matemáticas experto.
-Explica paso a paso de forma clara y ordenada.
+Eres un profesor experto en el Método de Taylor y en ecuaciones diferenciales.
+Tu tarea es resolver cualquier problema o duda matemática que el usuario escriba,
+explicando paso a paso de manera clara, formal y pedagógica.
 
-IMPORTANTE: Para las fórmulas matemáticas, usa estos delimitadores:
-- Para fórmulas en línea: \\( tu_formula \\)
-- Para fórmulas centradas: \\[ tu_formula \\]
+✅ Reglas de formato:
+- Usa texto normal para las explicaciones.
+- Usa LaTeX para TODAS las ecuaciones matemáticas.
+- Para ecuaciones en bloque, usa doble signo de dólar: $$ ecuacion $$ (todo en una sola línea).
+- No uses \\[ ... \\] ni \\( ... \\).
+- No insertes saltos de línea dentro de los delimitadores $$.
+- Muestra resultados y aproximaciones de forma ordenada, clara y legible.
 
-Ejemplo:
-La solución de la ecuación \\( ax^2 + bx + c = 0 \\) es:
-\\[ x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\]
+Ejemplo de formato esperado:
+La ecuación diferencial es: $$ y'' - 4y' + 4y = e^{3x} $$
+Su solución general es: $$ y(x) = C_1 e^{2x} + C_2 x e^{2x} + \\frac{1}{3} e^{3x} $$
+  `;
 
-Estructura tu respuesta con:
-1. **Problema:** Reformula el problema
-2. **Solución paso a paso:** Numera cada paso
-3. **Respuesta final:** Presenta el resultado claramente
-`;
-
-  // Función para parsear y renderizar el texto con fórmulas matemáticas
+  // 🧩 Función robusta para renderizar LaTeX (bloques e inline)
   const renderMathContent = (text) => {
     const parts = [];
     let lastIndex = 0;
-    
-    // Regex para capturar bloques \[ ... \] y inline \( ... \)
-    const mathRegex = /\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g;
+
+    // Captura $$...$$, \[...\] y \(...\), incluso con saltos de línea
+    const mathRegex = /\$\$([\s\S]*?)\$\$|\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g;
     let match;
 
     while ((match = mathRegex.exec(text)) !== null) {
-      // Agregar texto antes de la fórmula
       if (match.index > lastIndex) {
         parts.push(
           <span key={`text-${lastIndex}`}>
@@ -46,25 +45,30 @@ Estructura tu respuesta con:
         );
       }
 
-      // Agregar la fórmula (bloque o inline)
       if (match[1]) {
-        // Bloque \[ ... \]
+        // Bloque $$ ... $$
         parts.push(
           <div key={`block-${match.index}`} style={{ margin: '10px 0' }}>
             <BlockMath math={match[1].trim()} />
           </div>
         );
       } else if (match[2]) {
+        // Bloque \[ ... \]
+        parts.push(
+          <div key={`bracket-${match.index}`} style={{ margin: '10px 0' }}>
+            <BlockMath math={match[2].trim()} />
+          </div>
+        );
+      } else if (match[3]) {
         // Inline \( ... \)
         parts.push(
-          <InlineMath key={`inline-${match.index}`} math={match[2].trim()} />
+          <InlineMath key={`inline-${match.index}`} math={match[3].trim()} />
         );
       }
 
       lastIndex = match.index + match[0].length;
     }
 
-    // Agregar el texto restante
     if (lastIndex < text.length) {
       parts.push(
         <span key={`text-${lastIndex}`}>
@@ -76,6 +80,7 @@ Estructura tu respuesta con:
     return parts.length > 0 ? parts : text;
   };
 
+  // 🚀 Lógica principal: envía la consulta al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputText.trim() || isLoading) return;
@@ -112,7 +117,7 @@ Estructura tu respuesta con:
         <textarea
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Ejemplo: Resuelve la integral de x^2 * e^x"
+          placeholder="Ejemplo: Resolver y' = 2xy con y(1)=1 usando el método de Taylor"
           rows="5"
           disabled={isLoading}
         />

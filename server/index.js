@@ -21,7 +21,7 @@ app.post("/api/chat", async (req, res) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-       model: "meta-llama/llama-3-8b-instruct", // ✅ Acá definís el modelo
+       model: "microsoft/phi-3-mini-128k-instruct", // ✅ Acá definís el modelo
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userInput },
