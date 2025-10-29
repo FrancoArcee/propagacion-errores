@@ -8,7 +8,6 @@ function Calculadora() {
   const [response, setResponse] = useState('La respuesta aparecerá aquí.');
   const [isLoading, setIsLoading] = useState(false);
 
-  // 🧠 Prompt configurado para que el modelo devuelva LaTeX limpio
   const systemPrompt = `
 Eres un profesor experto en el Método de Taylor y en ecuaciones diferenciales.
 Tu tarea es resolver cualquier problema o duda matemática que el usuario escriba,
@@ -25,14 +24,11 @@ explicando paso a paso de manera clara, formal y pedagógica.
 Ejemplo de formato esperado:
 La ecuación diferencial es: $$ y'' - 4y' + 4y = e^{3x} $$
 Su solución general es: $$ y(x) = C_1 e^{2x} + C_2 x e^{2x} + \\frac{1}{3} e^{3x} $$
-  `;
+`;
 
-  // 🧩 Función robusta para renderizar LaTeX (bloques e inline)
   const renderMathContent = (text) => {
     const parts = [];
     let lastIndex = 0;
-
-    // Captura $$...$$, \[...\] y \(...\), incluso con saltos de línea
     const mathRegex = /\$\$([\s\S]*?)\$\$|\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g;
     let match;
 
@@ -46,21 +42,18 @@ Su solución general es: $$ y(x) = C_1 e^{2x} + C_2 x e^{2x} + \\frac{1}{3} e^{3
       }
 
       if (match[1]) {
-        // Bloque $$ ... $$
         parts.push(
           <div key={`block-${match.index}`} style={{ margin: '10px 0' }}>
             <BlockMath math={match[1].trim()} />
           </div>
         );
       } else if (match[2]) {
-        // Bloque \[ ... \]
         parts.push(
           <div key={`bracket-${match.index}`} style={{ margin: '10px 0' }}>
             <BlockMath math={match[2].trim()} />
           </div>
         );
       } else if (match[3]) {
-        // Inline \( ... \)
         parts.push(
           <InlineMath key={`inline-${match.index}`} math={match[3].trim()} />
         );
@@ -80,7 +73,6 @@ Su solución general es: $$ y(x) = C_1 e^{2x} + C_2 x e^{2x} + \\frac{1}{3} e^{3
     return parts.length > 0 ? parts : text;
   };
 
-  // 🚀 Lógica principal: envía la consulta al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputText.trim() || isLoading) return;
@@ -134,6 +126,48 @@ Su solución general es: $$ y(x) = C_1 e^{2x} + C_2 x e^{2x} + \\frac{1}{3} e^{3
           </div>
         </div>
       </div>
+
+      {/* 🌐 FOOTER DE TECNOLOGÍAS */}
+      <footer className="footer">
+        <div className="footer-content">
+          <h3>⚙️ Tecnologías utilizadas</h3>
+          <p>
+            Este proyecto combina herramientas modernas para integrar cálculo
+            matemático con inteligencia artificial:
+          </p>
+
+          <div className="tech-links">
+            <a href="https://react.dev/" target="_blank" rel="noreferrer">
+              ⚛️ React
+            </a>
+            <a href="https://nodejs.org/" target="_blank" rel="noreferrer">
+              🟢 Node.js
+            </a>
+            <a href="https://katex.org/" target="_blank" rel="noreferrer">
+              🔢 KaTeX
+            </a>
+            <a href="https://openrouter.ai/" target="_blank" rel="noreferrer">
+              🤖 OpenRouter
+            </a>
+          </div>
+
+          <div className="footer-info">
+            <h4>¿Qué es OpenRouter?</h4>
+            <p>
+              OpenRouter es una plataforma que conecta diferentes modelos de
+              inteligencia artificial (como GPT, Mistral o Claude) a través de
+              una única API. Permite usar IA de alta calidad sin depender de una
+              sola empresa y con opciones gratuitas o de bajo costo. En este
+              proyecto, se utiliza para procesar los problemas y generar las
+              explicaciones paso a paso.
+            </p>
+          </div>
+
+          <p className="footer-credits">
+            © {new Date().getFullYear()} Proyecto Método de Taylor — Todos los derechos reservados.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
