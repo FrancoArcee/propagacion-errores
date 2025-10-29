@@ -134,6 +134,51 @@ Su solución general es: $$ y(x) = C_1 e^{2x} + C_2 x e^{2x} + \\frac{1}{3} e^{3
           </div>
         </div>
       </div>
+
+    {/* 🌐 FOOTER DE TECNOLOGÍAS */}
+      <footer className="footer">
+        <div className="footer-content">
+          <h3>⚙️ Tecnologías utilizadas</h3>
+          <p>
+            Este proyecto combina herramientas modernas para integrar cálculo
+            matemático con inteligencia artificial:
+          </p>
+
+          <div className="tech-links">
+            <a href="https://react.dev/" target="_blank" rel="noreferrer">
+              ⚛️ React
+            </a>
+            <a href="https://nodejs.org/" target="_blank" rel="noreferrer">
+              🟢 Node.js
+            </a>
+            <a href="https://katex.org/" target="_blank" rel="noreferrer">
+              🔢 KaTeX
+            </a>
+            <a href="https://openrouter.ai/" target="_blank" rel="noreferrer">
+              🤖 OpenRouter
+            </a>
+          </div>
+
+          <div className="footer-info">
+            <h4>¿Qué es OpenRouter?</h4>
+            <p>
+              OpenRouter es una plataforma que conecta diferentes modelos de
+              inteligencia artificial (como GPT, Mistral o Claude) a través de
+              una única API. Permite usar IA de alta calidad sin depender de una
+              sola empresa y con opciones gratuitas o de bajo costo. En este
+              proyecto, se utiliza para procesar los problemas y generar las
+              explicaciones paso a paso.
+            </p>
+          </div>
+
+          <p className="footer-credits">
+            © {new Date().getFullYear()} Proyecto Método de Taylor — Todos los derechos reservados.
+          </p>
+        </div>
+      </footer>
+
+
+
     </div>
   );
 }
