@@ -1,139 +1,102 @@
+import { useState } from 'react';
+import { NavLink, useNavigate, useLocation } from "react-router-dom"
 import './styles/Introduccion.css';
 
 export default function Introduccion() {
+  const [openCards, setOpenCards] = useState([]);
+
+  const faqs = [
+    {
+      question: "¿Qué es un sistema fotovoltaico (FV)?",
+      answer: "Convierte la energía solar en electricidad mediante paneles solares. La energía generada puede usarse directamente, almacenarse o inyectarse a la red."
+    },
+    {
+      question: "¿Cómo funciona el simulador de SolarMetrics?",
+      answer: "Estima la generación mensual en base a irradiancia, temperatura e inclinación promedio. Usa modelos ajustados por mínimos cuadrados."
+    },
+    {
+      question: "¿Qué datos necesito para usar el simulador?",
+      answer: "Solo ingresá la irradiación solar mensual promedio, tipo de panel y potencia deseada. Calculamos generación, cantidad de paneles y costo."
+    },
+    {
+      question: "¿Los resultados del simulador son exactos?",
+      answer: "Son estimaciones basadas en datos reales. Factores como clima u orientación pueden modificar los resultados reales."
+    },
+    {
+      question: "¿Puedo usar SolarMetrics para proyectos comerciales?",
+      answer: "Sí. El modelo se adapta a diferentes escalas: industrial, comercial o residencial."
+    },
+    {
+      question: "¿El simulador es gratuito?",
+      answer: "Sí, podés utilizarlo sin costo desde nuestra web. Solo necesitás tus datos de irradiancia mensual."
+    }
+  ];
+
+  const toggleFAQ = (index) => {
+    const newOpenCards = [...openCards];
+    newOpenCards[index] = !newOpenCards[index];
+    setOpenCards(newOpenCards);
+  };
+
   return (
-    <div className="intro-container">
-      <div className="intro-wrapper">
-        {/* Header */}
-        <div className="intro-header">
-          <h1 className="intro-main-title">Método de Taylor</h1>
-          <p className="intro-subtitle">Para Ecuaciones Diferenciales Ordinarias</p>
+    <>
+      <section className="intro-panel">
+        <img
+          className="intro-bg"
+          src="./carrusel-image.jpeg"
+          alt="Paneles solares"
+        />
+        <div className="intro-content">
+          <h1 className="intro-title">SolarMetrics</h1>
+          <p className="intro-subtitle">Modelá tu energía solar con precisión científica</p>
+          <p className="intro-subtitle">
+            Simulá tu sistema fotovoltaico y estimá tu generación mensual con nuestro modelo de datos reales
+          </p>
+          <NavLink to="/calculadora" className="intro-btn">
+            PROBAR EL SIMULADOR
+          </NavLink>
         </div>
+      </section>
 
-        {/* PVI Section */}
-        <div>
-          <h2 className="intro-section-title">Problemas de Valor Inicial (PVI)</h2>
-          
-          <div className="intro-cards-grid">
-            {/* Card 1 */}
-            <div className="intro-card intro-card-blue">
-              <div className="intro-card-header">
-                <div className="intro-card-icon">📖</div>
-                <h3 className="intro-card-title">Ecuación Diferencial</h3>
-              </div>
-              <div className="intro-formula-box">
-                <p className="intro-formula">y' = f(x, y)</p>
-              </div>
-              <p className="intro-card-description">
-                Define cómo cambia la función en cada punto
-              </p>
-            </div>
+      <section className="intro-info" id="nosotros">
+        <div className="intro-info-wrapper">
+          <h2 className="intro-info-title">Sobre Nosotros</h2>
+          <p className="intro-info-text">
+            En <strong>SolarMetrics</strong> creemos que el futuro de la energía es limpio, accesible y
+            sustentable. Por eso desarrollamos soluciones fotovoltaicas inteligentes adaptadas a
+            las necesidades de hogares, empresas e instituciones.
+          </p>
 
-            {/* Card 2 */}
-            <div className="intro-card intro-card-green">
-              <div className="intro-card-header">
-                <div className="intro-card-icon">🎯</div>
-                <h3 className="intro-card-title">Condición Inicial</h3>
-              </div>
-              <div className="intro-formula-box">
-                <p className="intro-formula">y(x₀) = y₀</p>
-              </div>
-              <p className="intro-card-description">
-                Punto de partida conocido
-              </p>
-            </div>
-
-            {/* Card 3 */}
-            <div className="intro-card intro-card-purple">
-              <div className="intro-card-header">
-                <div className="intro-card-icon">📍</div>
-                <h3 className="intro-card-title">Dominio de Trabajo</h3>
-              </div>
-              <div className="intro-formula-box">
-                <p className="intro-formula">x₀ ≤ x ≤ x<sub>f</sub></p>
-              </div>
-              <p className="intro-card-description">
-                Intervalo donde calcularemos la solución
-              </p>
-            </div>
-
-            {/* Card 4 */}
-            <div className="intro-card intro-card-orange">
-              <div className="intro-card-header">
-                <div className="intro-card-icon">📏</div>
-                <h3 className="intro-card-title">Paso h</h3>
-              </div>
-              <div className="intro-formula-box">
-                <p className="intro-formula">h = x<sub>n+1</sub> - x<sub>n</sub></p>
-              </div>
-              <p className="intro-card-description">
-                Distancia entre puntos calculados
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Ordenada Genérica */}
-        <div className="intro-ordenada-section">
-          <h2>Ordenada Genérica</h2>
-          <div className="intro-ordenada-content">
-            <p>
-              La <strong>ordenada genérica</strong> es una fórmula que nos permite calcular el siguiente punto 
-              conociendo el punto anterior:
-            </p>
-            <div className="intro-ordenada-formula">
-              <p className="intro-formula">y<sub>n+1</sub> = función(y<sub>n</sub>, x<sub>n</sub>, h)</p>
-            </div>
-          </div>
-          <p className="intro-ordenada-footer">
-            Es la <strong>"receta"</strong> que usamos iterativamente para ir saltando de punto en punto 
-            desde x₀ hasta x<sub>f</sub>
+          <p className="intro-info-text">
+            Nuestra plataforma incluye un <strong>simulador de dimensionamiento fotovoltaico (FV)</strong>
+            que estima la generación eléctrica de un sistema solar a partir de datos reales de
+            irradiancia, temperatura e inclinación.
           </p>
         </div>
+      </section>
 
-        {/* Tipos de Algoritmos */}
-        <div>
-          <h2 className="intro-section-title">Tipos de Algoritmos</h2>
-          
-          <div className="intro-algoritmos-grid">
-            {/* Paso Simple */}
-            <div className="intro-algoritmo-card intro-algoritmo-simple">
-              <div className="intro-algoritmo-background"></div>
-              <div className="intro-algoritmo-content">
-                <div className="intro-algoritmo-emoji">🎯</div>
-                <h3 className="intro-algoritmo-title">Paso Simple</h3>
-                <p className="intro-algoritmo-description">
-                  Solo necesitan información del <strong>punto anterior</strong> para calcular el siguiente.
-                </p>
-                <div className="intro-algoritmo-box">
-                  <p>y<sub>n+1</sub> depende solo de y<sub>n</sub></p>
+      <section className="faq-section" id="faq">
+        <div className="faq-wrapper">
+          <h2 className="faq-title">Preguntas Frecuentes</h2>
+          <div className="faq-container">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className={`faq-item ${openCards[index] ? 'active' : ''}`}
+                onClick={() => toggleFAQ(index)}
+              >
+                <div className="faq-question">
+                  <h3>{faq.question}</h3>
+                  <span className="faq-icon">{openCards[index] ? '−' : '+'}</span>
                 </div>
-                <div className="intro-algoritmo-footer">
-                  <strong>Ejemplos:</strong> Euler, Taylor, Runge-Kutta
+                <div className="faq-answer">
+                  <p>{faq.answer}</p>
                 </div>
               </div>
-            </div>
-
-            {/* Paso Múltiple */}
-            <div className="intro-algoritmo-card intro-algoritmo-multiple">
-              <div className="intro-algoritmo-background"></div>
-              <div className="intro-algoritmo-content">
-                <div className="intro-algoritmo-emoji">📊</div>
-                <h3 className="intro-algoritmo-title">Paso Múltiple</h3>
-                <p className="intro-algoritmo-description">
-                  Necesitan información de <strong>varios puntos anteriores</strong> para calcular el siguiente.
-                </p>
-                <div className="intro-algoritmo-box">
-                  <p>y<sub>n+1</sub> depende de y<sub>n</sub>, y<sub>n-1</sub>, y<sub>n-2</sub>...</p>
-                </div>
-                <div className="intro-algoritmo-footer">
-                  <strong>Ejemplos:</strong> Adams-Bashforth, Adams-Moulton
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }

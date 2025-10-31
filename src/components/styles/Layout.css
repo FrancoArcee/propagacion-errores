@@ -51,14 +51,10 @@
 }
 
 .nav-link:hover {
-  background-color: var(--color-tertiary);
-  color: var(--color-text);
+  cursor: pointer;
+  color: white !important;
 }
 
-.nav-link.active {
-  background-color: var(--color-accent);
-  font-weight: 600;
-}
 
 /* -------- Content -------- */
 .content {
@@ -87,6 +83,59 @@
   border-radius: 2px;
   transition: all 0.3s ease;
 }
+
+:root {
+  --color-primary: #36A552; /* verde LuzVerde */
+  --color-background: #ffffff;
+  --color-text: #f5f5f5;
+}
+
+/* -------- Footer -------- */
+.footer {
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  text-align: center;
+  padding: 1.2rem 1rem;
+  margin-top: 2rem;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-links a {
+  color: var(--color-text);
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+}
+
+/* Para mantener visible el contenido entre header y footer */
+.content {
+  padding-top: 4.5rem;
+  min-height: calc(100vh - 120px);
+}
+
+/* --- Scroll suave global --- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Estilo para el botón "Nosotros" del menú --- */
+
+
+.nav-link.btn-nosotros {
+  display: inline-block;
+}
+
+
 
 /* -------- Responsive -------- */
 @media (max-width: 768px) {
