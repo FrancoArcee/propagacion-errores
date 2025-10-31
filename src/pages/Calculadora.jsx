@@ -1,7 +1,7 @@
 
 function Calculadora() {
   return (
-    <h1>Acá va la parte de joaco</h1>
+    <h1>Aca iria el supuesto simulador</h1>
   );
 }
 
