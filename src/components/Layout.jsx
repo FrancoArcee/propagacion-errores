@@ -63,12 +63,8 @@ function Layout({ children }) {
           >
             Inicio
           </NavLink>
-
-          <NavLink
-            to="/calculadora"
-            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-          >
-            Simulador
+          <NavLink to="/practica" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Calculadora
           </NavLink>
 
           <NavLink

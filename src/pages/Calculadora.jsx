@@ -1,8 +1,7 @@
-import React from 'react';
 
-const Calculadora = () => {
+function Calculadora() {
   return (
-    <h1>Acá iría el simulador</h1>
+    <h1>Acá va la parte de joaco</h1>
   );
 }
 
