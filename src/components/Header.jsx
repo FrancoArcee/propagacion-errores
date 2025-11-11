@@ -65,7 +65,7 @@ export default function Header() {
         </NavLink>
 
         <NavLink
-          to="/aplicacion"
+          to="/home"
           className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
         >
           Contacto
