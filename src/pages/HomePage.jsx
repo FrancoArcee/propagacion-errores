@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from "react-router-dom"
-import './styles/Introduccion.css';
+import './styles/HomePage.css';
 
-export default function Introduccion() {
+export default function HomePage() {
   const [openCards, setOpenCards] = useState([]);
 
   const faqs = [

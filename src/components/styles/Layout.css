@@ -1,93 +1,20 @@
-/* -------- Header -------- */
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--color-primary);
-  padding: 0.8rem 2rem;
+:root {
+  --color-primary: #36A552;
+  --color-background: #ffffff;
+  --color-text: #f5f5f5;
+}
+
+/* -------- Estructura general -------- */
+.layout {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  flex-direction: column;
+  min-height: 100vh;
 }
-
-/* Logo y nombre */
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex-shrink: 1;
-}
-
-.logo {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-}
-
-.group-name {
-  color: var(--color-background);
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  line-height: 1.2; /* para dos líneas si hace falta */
-}
-
-/* -------- Navbar -------- */
-.nav {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.nav-link {
-  color: var(--color-text);
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.nav-link:hover {
-  cursor: pointer;
-  color: white !important;
-}
-
 
 /* -------- Content -------- */
 .content {
-  padding-top: 2.5rem;
-}
-
-/* -------- Botón hamburguesa -------- */
-.menu-toggle {
-  display: none;
-}
-
-.menu-btn {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 28px;
-  height: 22px;
-  cursor: pointer;
-  z-index: 1201; /* encima del panel lateral */
-}
-
-.menu-btn span {
-  display: block;
-  height: 3px;
-  background: var(--color-text);
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-:root {
-  --color-primary: #36A552; /* verde LuzVerde */
-  --color-background: #ffffff;
-  --color-text: #f5f5f5;
+  padding-top: 4.5rem; /* espacio para el header fijo */
+  min-height: calc(100vh - 120px);
 }
 
 /* -------- Footer -------- */
@@ -117,87 +44,7 @@
   color: #ffffff;
 }
 
-/* Para mantener visible el contenido entre header y footer */
-.content {
-  padding-top: 4.5rem;
-  min-height: calc(100vh - 120px);
-}
-
 /* --- Scroll suave global --- */
 html {
   scroll-behavior: smooth;
-}
-
-/* --- Estilo para el botón "Nosotros" del menú --- */
-
-
-.nav-link.btn-nosotros {
-  display: inline-block;
-}
-
-
-
-/* -------- Responsive -------- */
-@media (max-width: 768px) {
-  /* Ocultar nav en móviles */
-  .nav {
-    display: none;
-    flex-direction: column;
-    padding-top: 4rem; /* separa las opciones del botón X */
-    gap: 1rem; /* espacio decente entre links */
-    overflow-y: auto; /* scroll si hay muchas opciones */
-  }
-
-  /* Mostrar hamburguesa */
-  .menu-btn {
-    display: flex;
-  }
-
-  /* Logo-section en dos líneas si no entra */
-  .logo-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .group-name {
-    font-size: 1.3rem; /* tamaño ligeramente menor para móviles */
-  }
-
-  /* Menú lateral */
-  #menu-toggle:checked ~ .nav {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 70%;
-    max-width: 260px;
-    height: 100vh;
-    background: var(--color-primary);
-    padding: 2rem 1.5rem 1.5rem 1.5rem; /* padding superior + lateral */
-    box-shadow: -2px 0 6px rgba(0, 0, 0, 0.3);
-    z-index: 1200;
-    animation: slideIn 0.3s ease forwards;
-  }
-
-  /* Animación hamburguesa → X */
-  #menu-toggle:checked ~ .menu-btn span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 6px);
-  }
-  #menu-toggle:checked ~ .menu-btn span:nth-child(2) {
-    opacity: 0;
-  }
-  #menu-toggle:checked ~ .menu-btn span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-  }
-}
-
-/* -------- Animación del panel -------- */
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
 }

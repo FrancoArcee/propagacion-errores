@@ -1,0 +1,145 @@
+/* -------- Header -------- */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-primary);
+  padding: 0.8rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Logo y nombre */
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-shrink: 1;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.group-name {
+  color: var(--color-background);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+/* -------- Navbar -------- */
+.nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  cursor: pointer;
+  color: white !important;
+}
+
+/* -------- Botón hamburguesa -------- */
+.menu-toggle {
+  display: none;
+}
+
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  cursor: pointer;
+  z-index: 1201;
+}
+
+.menu-btn span {
+  display: block;
+  height: 3px;
+  background: var(--color-text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+    flex-direction: column;
+    padding-top: 4rem;
+    gap: 1rem;
+    overflow-y: auto;
+  }
+
+  .menu-btn {
+    display: flex;
+  }
+
+  .logo-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .group-name {
+    font-size: 1.3rem;
+  }
+
+  #menu-toggle:checked ~ .nav {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 70%;
+    max-width: 260px;
+    height: 100vh;
+    background: var(--color-primary);
+    padding: 2rem 1.5rem;
+    box-shadow: -2px 0 6px rgba(0, 0, 0, 0.3);
+    z-index: 1200;
+    animation: slideIn 0.3s ease forwards;
+  }
+
+  #menu-toggle:checked ~ .menu-btn span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 6px);
+  }
+  #menu-toggle:checked ~ .menu-btn span:nth-child(2) {
+    opacity: 0;
+  }
+  #menu-toggle:checked ~ .menu-btn span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+}
+
+/* -------- Animación del panel -------- */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* --- Botones específicos --- */
+.nav-link.btn-nosotros,
+.nav-link.btn-faq {
+  display: inline-block;
+}
