@@ -50,7 +50,7 @@ export default function Header() {
 
       <nav className="nav">
         <NavLink
-          to="/"
+          to="/home"
           end
           className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
         >
@@ -58,14 +58,14 @@ export default function Header() {
         </NavLink>
 
         <NavLink
-          to="/calculadora"
+          to="/simulador"
           className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
         >
           Simulador
         </NavLink>
 
         <NavLink
-          to="/home"
+          to="/contacto"
           className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
         >
           Contacto

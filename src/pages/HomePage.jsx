@@ -63,7 +63,7 @@ export default function HomePage() {
           <p className="intro-subtitle">
             Simulá tu sistema fotovoltaico y estimá tu generación mensual con nuestro modelo de datos reales
           </p>
-          <NavLink to="/calculadora" className="intro-btn">
+          <NavLink to="/simulador" className="intro-btn">
             PROBAR EL SIMULADOR
           </NavLink>
         </div>

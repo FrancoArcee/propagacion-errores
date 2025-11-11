@@ -1,8 +1,8 @@
 import React from 'react';
-  const Aplicacion = () => { 
+const Contacto = () => { 
   return (
     <h1>Acá iría el supuesto contacto</h1>
   );
 }
 
-export default Aplicacion;
+export default Contacto;
