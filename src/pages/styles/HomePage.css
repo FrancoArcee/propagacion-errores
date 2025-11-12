@@ -31,11 +31,6 @@
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  transition: transform 0.3s ease;
-}
-
-.section:hover .section-bg {
-  transform: scale(1.02);
 }
 
 .background-overlay {
@@ -79,18 +74,6 @@
   letter-spacing: 1px;
   margin-bottom: 1.5rem;
   box-shadow: 0 4px 15px rgba(54, 165, 82, 0.3);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 4px 15px rgba(54, 165, 82, 0.3);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 6px 25px rgba(54, 165, 82, 0.5);
-  }
 }
 
 /* -------- Intro Section -------- */
@@ -118,25 +101,9 @@
   font-size: 4.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #ffffff 0%, #36A552 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: titleGlow 3s ease-in-out infinite;
-}
-
-@keyframes titleGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 10px rgba(54, 165, 82, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 0 20px rgba(54, 165, 82, 0.6));
-  }
-}
-
-.highlight {
-  color: var(--primary-green-light);
-  text-shadow: 0 0 30px rgba(54, 165, 82, 0.8);
+  color: #ffffff;
+  text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
 }
 
 .intro-subtitle {
@@ -210,34 +177,6 @@
   transform: translateX(5px);
 }
 
-.scroll-indicator {
-  position: absolute;
-  bottom: 3rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-light);
-  font-size: 0.9rem;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(10px);
-  }
-}
-
-.scroll-arrow {
-  font-size: 1.5rem;
-  color: var(--accent-yellow);
-}
-
 /* -------- Nosotros Section -------- */
 .nosotros-section {
   padding: 4rem 0;
@@ -273,12 +212,6 @@
   background: var(--glass-bg-hover);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
   border-color: var(--primary-green);
-}
-
-.card-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
 }
 
 .nosotros-card h3 {
@@ -350,17 +283,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 1.5rem;
-}
-
-.faq-question-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.faq-emoji {
-  font-size: 1.8rem;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
 }
 
 .faq-question h3 {
@@ -457,10 +379,6 @@
 
   .nosotros-card {
     padding: 1.5rem;
-  }
-
-  .scroll-indicator {
-    bottom: 2rem;
   }
 }
 

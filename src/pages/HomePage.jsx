@@ -30,37 +30,31 @@ export default function HomePage() {
       question: "¿Qué es un sistema fotovoltaico (FV)?",
       answer:
         "Convierte la energía solar en electricidad mediante paneles solares. La energía generada puede usarse directamente, almacenarse o inyectarse a la red.",
-      icon: "☀️",
     },
     {
       question: "¿Cómo funciona el simulador de SolarMetrics?",
       answer:
         "Estima la generación mensual en base a irradiancia, temperatura e inclinación promedio. Usa modelos ajustados por mínimos cuadrados.",
-      icon: "📊",
     },
     {
       question: "¿Qué datos necesito para usar el simulador?",
       answer:
         "Solo ingresá la irradiación solar mensual promedio, tipo de panel y potencia deseada. Calculamos generación, cantidad de paneles y costo.",
-      icon: "📝",
     },
     {
       question: "¿Los resultados del simulador son exactos?",
       answer:
         "Son estimaciones basadas en datos reales. Factores como clima u orientación pueden modificar los resultados reales.",
-      icon: "🎯",
     },
     {
       question: "¿Puedo usar SolarMetrics para proyectos comerciales?",
       answer:
         "Sí. El modelo se adapta a diferentes escalas: industrial, comercial o residencial.",
-      icon: "🏢",
     },
     {
       question: "¿El simulador es gratuito?",
       answer:
         "Sí, podés utilizarlo sin costo desde nuestra web. Solo necesitás tus datos de irradiancia mensual.",
-      icon: "💰",
     },
   ];
 
@@ -82,9 +76,7 @@ export default function HomePage() {
           alt="Paneles solares"
         />
         <div className={`section-content intro-content ${isVisible.intro ? "fade-in" : ""}`}>
-          <h1 className="intro-title">
-            Solar<span className="highlight">Metrics</span>
-          </h1>
+          <h1 className="intro-title">SolarMetrics</h1>
           <p className="intro-subtitle">
             Modelá tu energía solar con <span className="text-accent">precisión científica</span>
           </p>
@@ -107,7 +99,6 @@ export default function HomePage() {
           <h2 className="nosotros-title">Sobre Nosotros</h2>
           <div className="nosotros-grid">
             <div className="nosotros-card">
-              <div className="card-icon">🔆</div>
               <h3>Energía Limpia</h3>
               <p className="nosotros-text">
                 En <strong>SolarMetrics</strong> creemos que el futuro de la energía es limpio, 
@@ -115,7 +106,6 @@ export default function HomePage() {
               </p>
             </div>
             <div className="nosotros-card">
-              <div className="card-icon">🏠</div>
               <h3>Soluciones Adaptadas</h3>
               <p className="nosotros-text">
                 Desarrollamos soluciones fotovoltaicas inteligentes adaptadas a las necesidades 
@@ -123,7 +113,6 @@ export default function HomePage() {
               </p>
             </div>
             <div className="nosotros-card">
-              <div className="card-icon">📈</div>
               <h3>Simulador Preciso</h3>
               <p className="nosotros-text">
                 Nuestra plataforma incluye un simulador de dimensionamiento FV que estima 
@@ -150,10 +139,7 @@ export default function HomePage() {
                 onClick={() => toggleFAQ(index)}
               >
                 <div className="faq-question">
-                  <div className="faq-question-content">
-                    <span className="faq-emoji">{faq.icon}</span>
-                    <h3>{faq.question}</h3>
-                  </div>
+                  <h3>{faq.question}</h3>
                   <span className="faq-icon">{openCards[index] ? "−" : "+"}</span>
                 </div>
                 <div className="faq-answer">
