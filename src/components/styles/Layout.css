@@ -11,19 +11,12 @@
   min-height: 100vh;
 }
 
-/* -------- Content -------- */
-.content {
-  padding-top: 4.5rem; /* espacio para el header fijo */
-  min-height: calc(100vh - 120px);
-}
-
 /* -------- Footer -------- */
 .footer {
   background-color: var(--color-primary);
   color: var(--color-text);
   text-align: center;
   padding: 1.2rem 1rem;
-  margin-top: 2rem;
   box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
 }
 
