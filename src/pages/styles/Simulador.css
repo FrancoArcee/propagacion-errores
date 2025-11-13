@@ -1,0 +1,191 @@
+/* -------- Variables de tu Home.css -------- */
+:root {
+  --primary-green: #36A552;
+  --primary-green-dark: #2e9148;
+  --primary-green-light: #4bc065;
+  --accent-yellow: #fbbf24;
+  --text-light: #f3f4f6;
+  --text-white: #ffffff;
+  --overlay-dark: rgba(0, 0, 0, 0.65);
+  --overlay-light: rgba(0, 0, 0, 0.35);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-hover: rgba(255, 255, 255, 0.18);
+
+  /* Nuevas variables para el lado claro */
+  --text-dark: #333333;
+  --text-muted: #555555;
+  --bg-light: #ffffff;
+}
+
+/* --- Contenedor Principal --- */
+.simulador-container {
+  margin-top: 2em;
+  display: flex;
+  min-height: 100vh;
+  /* Asumo una fuente genérica, cámbiala si usas una específica */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-light);
+}
+
+/* --- Columna Izquierda (Imagen) --- */
+.simulador-left {
+  flex-basis: 50%;
+  padding: 4rem;
+  color: var(--text-white);
+  
+  /* Usamos el overlay de tu Home.css */
+  background-image: 
+    linear-gradient(135deg, var(--overlay-dark) 0%, var(--overlay-light) 100%), 
+    url('https://st4.depositphotos.com/11085122/21452/i/600/depositphotos_214523660-stock-photo-two-young-technicians-mounting-heavy.jpg'); /* <-- ¡¡CAMBIA ESTA URL POR TU IMAGEN!! */
+  
+  background-size: cover;
+  background-position: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.simulador-left-content {
+  max-width: 550px;
+}
+
+.simulador-left h1 {
+  /* Estilo inspirado en .intro-title */
+  font-size: 3.5rem; /* Ligeramente más pequeño que el home */
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.simulador-left p {
+  /* Estilo inspirado en .intro-description */
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-light);
+  max-width: 500px;
+}
+
+/* --- Columna Derecha (Info) --- */
+.simulador-right {
+  flex-basis: 50%;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  padding: 4rem;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.simulador-right-content {
+  max-width: 550px;
+}
+
+.simulador-intro-text {
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+}
+
+.simulador-list {
+  list-style: none; /* Quitamos los números por defecto */
+  padding: 0;
+  margin: 0 0 2rem 0;
+}
+
+.simulador-list li {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Creamos un "check" con el color de acento */
+.simulador-list li::before {
+  content: '✓';
+  color: var(--primary-green); /* Usamos tu verde primario */
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-right: 0.8rem;
+}
+
+.simulador-disclaimer {
+  font-size: 0.9rem;
+  color: #777;
+  line-height: 1.5;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+}
+
+/* -------- Estilos de Botón (Copiados de tu Home.css) -------- */
+.intro-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* Centramos el texto y el ícono */
+  gap: 0.8rem;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-light));
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 1.1rem 2.5rem; /* Ajuste ligero para este contexto */
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(54, 165, 82, 0.4);
+  text-decoration: none;
+  overflow: hidden;
+  max-width: 220px; /* Le damos un ancho máximo */
+}
+
+.intro-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
+}
+
+.intro-btn:hover::before {
+  left: 100%;
+}
+
+.intro-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(54, 165, 82, 0.6);
+}
+
+.btn-icon {
+  font-size: 1.2rem; /* Ligeramente más pequeño para este botón */
+  transition: transform 0.3s;
+}
+
+.intro-btn:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+
+/* --- Responsivo para Móviles --- */
+@media (max-width: 900px) {
+  .simulador-container {
+    flex-direction: column; /* Apila las columnas */
+  }
+
+  .simulador-left, .simulador-right {
+    flex-basis: auto; /* Resetea el ancho */
+    min-height: 50vh; /* Da altura a cada sección */
+    padding: 2.5rem; /* Menos padding en móvil */
+  }
+
+  .simulador-left h1 {
+    font-size: 2.5rem; /* Fuente más pequeña en móvil */
+  }
+}
