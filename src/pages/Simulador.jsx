@@ -1,7 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import { MapPin } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './styles/Step1.css';
@@ -22,7 +21,7 @@ function LocationMarker({ position, setPosition, setSearchInput }) {
       const { lat, lng } = e.latlng;
       setPosition([lat, lng]);
       
-      // Geocodificación inversa usando Nominatim (OpenStreetMap)
+      // Geocodificación inversa usando Nominatim
       fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
         .then(res => res.json())
         .then(data => {
@@ -37,17 +36,29 @@ function LocationMarker({ position, setPosition, setSearchInput }) {
   return position ? <Marker position={position} /> : null;
 }
 
-function Step1() {
-  // Centro por defecto (Buenos Aires, Argentina)
+function Simulador() {
   const defaultCenter = [-34.6037, -58.3816];
   const [position, setPosition] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [mapType, setMapType] = useState('roadmap');
   const mapRef = useRef(null);
-  
   const navigate = useNavigate();
 
-  // Buscar dirección usando Nominatim
+  // Cachear ubicación con useMemo
+  const cachedLocation = useMemo(() => {
+    if (position && searchInput) {
+      const locationData = {
+        address: searchInput,
+        coordinates: { lat: position[0], lng: position[1] }
+      };
+      // Guardar automáticamente en localStorage
+      localStorage.setItem('selectedLocation', JSON.stringify(locationData));
+      return locationData;
+    }
+    return null;
+  }, [position, searchInput]);
+
+  // Buscar dirección
   const handleSearch = async () => {
     if (!searchInput.trim()) return;
 
@@ -62,7 +73,6 @@ function Step1() {
         const newPosition = [parseFloat(lat), parseFloat(lon)];
         setPosition(newPosition);
         
-        // Centrar el mapa en la nueva posición
         if (mapRef.current) {
           mapRef.current.flyTo(newPosition, 18);
         }
@@ -73,19 +83,14 @@ function Step1() {
   };
 
   const handleBack = () => navigate('/simulador');
-  
+
   const handleConfirm = () => {
-    if (searchInput && position) {
-      // Guardar la ubicación
-      localStorage.setItem('selectedLocation', JSON.stringify({
-        address: searchInput,
-        coordinates: { lat: position[0], lng: position[1] }
-      }));
-      navigate('/step2');
+    if (cachedLocation) {
+      // Ya está en localStorage gracias a useMemo
+      navigate('/step1');
     }
   };
 
-  // URLs de diferentes tipos de mapa
   const tileUrls = {
     roadmap: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
@@ -138,7 +143,7 @@ function Step1() {
           </div>
         </div>
 
-        {/* Mapa de OpenStreetMap */}
+        {/* Mapa */}
         <div className="map-container">
           <MapContainer
             center={position || defaultCenter}
@@ -157,7 +162,6 @@ function Step1() {
             />
           </MapContainer>
         </div>
-
 
         {/* Mostrar coordenadas seleccionadas */}
         {position && (
@@ -185,4 +189,4 @@ function Step1() {
   );
 }
 
-export default Step1;
+export default Simulador;

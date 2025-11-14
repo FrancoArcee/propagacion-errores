@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
 import './styles/Step3.css';
 import { StepSideBar } from '../components/StepSideBar';
 
@@ -8,23 +7,39 @@ function Step3() {
   const [gastoArs, setGastoArs] = useState('');
   const [periodo, setPeriodo] = useState('mensual');
   const [incluyeIva, setIncluyeIva] = useState(true);
-  
-  const navigate = useNavigate();
 
-  const handleBack = () => {
-    navigate('/step2');
-  };
+  // Memoiza el objeto con los datos actuales
+  const step3Data = useMemo(() => ({
+    activeTab,
+    gastoArs,
+    periodo,
+    incluyeIva
+  }), [activeTab, gastoArs, periodo, incluyeIva]);
+
+  // Guardar en localStorage cada vez que step3Data cambie
+  useEffect(() => {
+    try {
+      // Obtiene datos anteriores de localStorage
+      const existingData = JSON.parse(localStorage.getItem('appCache')) || {};
+
+      // Combina datos previos con los de este paso
+      const newData = {
+        ...existingData,
+        step3: step3Data
+      };
+
+      localStorage.setItem('appCache', JSON.stringify(newData));
+    } catch (error) {
+      console.error('Error guardando en localStorage', error);
+    }
+  }, [step3Data]);
 
   const handleNext = () => {
-    const data = { activeTab, gastoArs, periodo, incluyeIva };
-    console.log("Datos del Paso 3:", data);
-
     if (activeTab === 'sabe' && !gastoArs) {
       console.warn("Por favor, completa tu gasto.");
       return;
     }
-    
-    navigate('/step4', { state: { step3Data: data } });
+    console.log("Datos del Paso 3 guardados en localStorage:", step3Data);
   };
 
   return (
@@ -39,27 +54,29 @@ function Step3() {
       <div className="step3-right">
         <h3>Ingresa tu gasto de energía</h3>
 
-        <div className="form-tabs">
+        {/* Tabs */}
+        <div className="step3-tabs">
           <button
-            className={`tab-btn ${activeTab === 'sabe' ? 'active' : ''}`}
+            className={`step3-tab-btn ${activeTab === 'sabe' ? 'active' : ''}`}
             onClick={() => setActiveTab('sabe')}
           >
             Sé cuánto gasto
           </button>
           <button
-            className={`tab-btn ${activeTab === 'no_sabe' ? 'active' : ''}`}
+            className={`step3-tab-btn ${activeTab === 'no_sabe' ? 'active' : ''}`}
             onClick={() => setActiveTab('no_sabe')}
           >
             No sé cuánto gasto
           </button>
         </div>
 
-        <div className="tab-content">
+        {/* Tab Content */}
+        <div className="step3-tab-content">
           {activeTab === 'sabe' ? (
-            <div>
-              <div className="form-group">
+            <>
+              <div className="step3-form-group">
                 <label htmlFor="gasto-ars">Gasto medio</label>
-                <div className="input-with-unit">
+                <div className="step3-input-with-unit">
                   <input
                     type="number"
                     id="gasto-ars"
@@ -67,75 +84,97 @@ function Step3() {
                     value={gastoArs}
                     onChange={(e) => setGastoArs(e.target.value)}
                   />
-                  <span className="input-unit">ARS</span>
+                  <span className="step3-input-unit">ARS</span>
                 </div>
               </div>
-              
-              <div className="form-group-columns">
-                <div className="form-group radio-group">
+
+              <div className="step3-form-columns">
+                {/* Período */}
+                <div className="step3-form-group">
                   <label>Período de referencia</label>
-                  <div className="radio-options vertical">
-                    <label>
+                  <div className="step3-radio-options">
+                    <div className="step3-form-check">
                       <input
+                        className="step3-form-check-input"
                         type="radio"
                         name="periodo"
+                        id="periodoAnual"
                         value="anual"
                         checked={periodo === 'anual'}
                         onChange={(e) => setPeriodo(e.target.value)}
                       />
-                      Anual
-                    </label>
+                      <label className="step3-form-check-label" htmlFor="periodoAnual">
+                        Anual
+                      </label>
+                    </div>
 
-                    <label>
+                    <div className="step3-form-check">
                       <input
+                        className="step3-form-check-input"
                         type="radio"
                         name="periodo"
+                        id="periodoBimesual"
                         value="bi-mesual"
                         checked={periodo === 'bi-mesual'}
                         onChange={(e) => setPeriodo(e.target.value)}
                       />
-                      Bi-mesual
-                    </label>
+                      <label className="step3-form-check-label" htmlFor="periodoBimesual">
+                        Bi-mesual
+                      </label>
+                    </div>
 
-                    <label>
+                    <div className="step3-form-check">
                       <input
+                        className="step3-form-check-input"
                         type="radio"
                         name="periodo"
+                        id="periodoMensual"
                         value="mensual"
                         checked={periodo === 'mensual'}
                         onChange={(e) => setPeriodo(e.target.value)}
                       />
-                      Mensual
-                    </label>
+                      <label className="step3-form-check-label" htmlFor="periodoMensual">
+                        Mensual
+                      </label>
+                    </div>
                   </div>
                 </div>
 
-                <div className="form-group radio-group">
+                {/* IVA */}
+                <div className="step3-form-group">
                   <label>La cantidad indicada</label>
-                  <div className="radio-options vertical">
-                    <label>
+                  <div className="step3-radio-options">
+                    <div className="step3-form-check">
                       <input
+                        className="step3-form-check-input"
                         type="radio"
                         name="iva"
+                        id="ivaIncluye"
                         checked={incluyeIva === true}
                         onChange={() => setIncluyeIva(true)}
                       />
-                      Incluye IVA
-                    </label>
+                      <label className="step3-form-check-label" htmlFor="ivaIncluye">
+                        Incluye IVA
+                      </label>
+                    </div>
 
-                    <label>
+                    <div className="step3-form-check">
                       <input
+                        className="step3-form-check-input"
                         type="radio"
                         name="iva"
+                        id="ivaNoIncluye"
                         checked={incluyeIva === false}
                         onChange={() => setIncluyeIva(false)}
                       />
-                      No incluye IVA
-                    </label>
+                      <label className="step3-form-check-label" htmlFor="ivaNoIncluye">
+                        No incluye IVA
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </>
           ) : (
             <div>
               <p>
@@ -147,11 +186,12 @@ function Step3() {
           )}
         </div>
 
-        <div className="nav-buttons">
-          <button className="btn-secondary" onClick={handleBack}>
+        {/* Botones */}
+        <div className="step3-nav-buttons">
+          <button className="step3-btn-secondary" onClick={() => console.log('Volver')}>
             VOLVER
           </button>
-          <button className="intro-btn" onClick={handleNext}>
+          <button className="step3-intro-btn" onClick={handleNext}>
             CALCULAR
           </button>
         </div>
@@ -159,5 +199,7 @@ function Step3() {
     </div>
   );
 }
+
+console.log(JSON.parse(localStorage.getItem('appCache')));
 
 export default Step3;

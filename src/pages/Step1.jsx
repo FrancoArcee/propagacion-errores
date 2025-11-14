@@ -4,7 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import "./styles/Step2.css";
 import { StepSideBar } from "../components/StepSideBar"; 
 
-function Step2() {
+function Step1() {
   const [activeTab, setActiveTab] = useState("sabe");
   const [gastoKwh, setGastoKwh] = useState("");
   const [superficie, setSuperficie] = useState("");
@@ -30,7 +30,6 @@ function Step2() {
     // Guardar datos
     localStorage.setItem('step2Data', JSON.stringify(data));
     toast.success("¡Datos guardados correctamente!");
-    
     setTimeout(() => navigate("/step3", { state: { step2Data: data } }), 800);
   };
 
@@ -194,4 +193,4 @@ function Step2() {
   );
 }
 
-export default Step2;
+export default Step1;
