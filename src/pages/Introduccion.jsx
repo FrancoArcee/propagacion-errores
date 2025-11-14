@@ -22,9 +22,6 @@ function Introduccion() {
         <div className="concept-card card-irradiancia">
           <div className="card-icon">☀️</div>
           <h3 className="card-title">Irradiancia</h3>
-          <p className="card-description">
-            <strong>Potencia instantánea</strong> de la radiación solar que llega a una superficie.
-          </p>
           <div className="card-detail">
             <span className="detail-label">Unidad de medida:</span>
             <span className="detail-value">W/m² (Watts por metro cuadrado)</span>

@@ -8,6 +8,7 @@ const Resolucion = () => {
   const [data, setData] = useState([]);
   const [fitType, setFitType] = useState("exponencial");
   const [useClusters, setUseClusters] = useState(false);
+  const [clusterType, setClusterType] = useState("clima");
   const [results, setResults] = useState(null);
   const [bestFit, setBestFit] = useState(null);
 
@@ -18,11 +19,11 @@ const Resolucion = () => {
 
   useEffect(() => {
     if (data.length > 0) calculateRegression();
-  }, [data, fitType, useClusters]);
+  }, [data, fitType, useClusters, clusterType]);
 
   const loadData = async () => {
     try {
-      const response = await fetch("/data.xlsx");
+      const response = await fetch("/data2.xlsx");
       const arrayBuffer = await response.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: "array" });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -37,48 +38,259 @@ const Resolucion = () => {
             String(row.pv_power_kW || row["pv_power_kW"]).replace(",", ".")
           ),
           skyState: row.sky_state || row["sky_state"],
+          inclinacion: parseFloat(
+            String(row["inclinacion"] || row.inclinacion_).replace(",", ".")
+          ),
+          temperatura: parseFloat(
+            String(row["temperatura_ambiental"] || row.temperatura_ambiental_C).replace(",", ".")
+          ),
         }))
         .filter((d) => !isNaN(d.irradiance) && !isNaN(d.power));
-
+      console.log("Loaded data:", parsed);
       setData(parsed);
     } catch (error) {
       console.error("Error loading data:", error);
     }
   };
-  
+
+  const generateClimaClusters = () => {
+    // Clustering por clima (nublado/despejado)
+    const clusters = {};
+
+    data.forEach((point) => {
+      const clusterKey = point.skyState;
+
+      if (!clusters[clusterKey]) {
+        clusters[clusterKey] = {
+          key: clusterKey,
+          label: point.skyState === "cloudy" ? "Nublado" : "Despejado",
+          data: [],
+        };
+      }
+
+      clusters[clusterKey].data.push(point);
+    });
+
+    return Object.values(clusters).filter((c) => c.data.length > 0);
+  };
+
+  const generateTemperaturaClusters = () => {
+    // Clustering por temperatura: fría (<=10), media (11-29), cálida (>=30)
+    const clusters = {
+      fria: { key: "fria", label: "Fría (≤10°C)", data: [] },
+      media: { key: "media", label: "Media (11-29°C)", data: [] },
+      calida: { key: "calida", label: "Cálida (≥30°C)", data: [] },
+    };
+
+    data.forEach((point) => {
+      if (point.temperatura <= 10) {
+        clusters.fria.data.push(point);
+      } else if (point.temperatura <= 29) {
+        clusters.media.data.push(point);
+      } else {
+        clusters.calida.data.push(point);
+      }
+    });
+
+    return Object.values(clusters).filter((c) => c.data.length > 0);
+  };
+
+  const generateInclinacionClusters = () => {
+    // Clustering por inclinación: baja (<=30), alta (>30)
+    const clusters = {
+      baja: { key: "baja", label: "Baja (≤30°)", data: [] },
+      alta: { key: "alta", label: "Alta (>30°)", data: [] },
+    };
+
+    data.forEach((point) => {
+      if (point.inclinacion <= 30) {
+        clusters.baja.data.push(point);
+      } else {
+        clusters.alta.data.push(point);
+      }
+    });
+
+    return Object.values(clusters).filter((c) => c.data.length > 0);
+  };
+
+  const generateClusters = () => {
+    if (clusterType === "clima") {
+      return generateClimaClusters();
+    } else if (clusterType === "temperatura") {
+      return generateTemperaturaClusters();
+    } else if (clusterType === "inclinacion") {
+      return generateInclinacionClusters();
+    }
+    return [];
+  };
+
   const calculateRegression = () => {
     if (!useClusters) {
       const result = performRegression(data, fitType);
       setResults({ overall: result });
     } else {
-      const clearData = data.filter((d) => d.skyState === "clear");
-      const cloudyData = data.filter((d) => d.skyState === "cloudy");
+      const clusters = generateClusters();
+      const clusterResults = {};
+      
+      // Calcular RMSE global combinando todos los clusters
+      let allPredictions = [];
+      let allActuals = [];
 
-      const clearResult = performRegression(clearData, fitType);
-      const cloudyResult = performRegression(cloudyData, fitType);
+      clusters.forEach((cluster) => {
+        const result = performRegression(cluster.data, fitType);
+        clusterResults[cluster.key] = { ...result, cluster };
+        
+        // Acumular predicciones y valores reales
+        const x = cluster.data.map((d) => d.irradiance);
+        const y = cluster.data.map((d) => d.power);
+        const predictions = x.map((xi) => {
+          // Recrear la función de predicción basada en los coeficientes
+          if (fitType === "lineal") {
+            return result.coefficients[0] * xi + result.coefficients[1];
+          } else if (fitType === "exponencial") {
+            return result.coefficients[0] * Math.exp(result.coefficients[1] * xi);
+          } else if (fitType === "potencial") {
+            return result.coefficients[0] * Math.pow(xi, result.coefficients[1]);
+          } else if (fitType === "polinomico") {
+            return result.coefficients[0] + result.coefficients[1] * xi + result.coefficients[2] * xi * xi;
+          }
+        });
+        
+        allPredictions = allPredictions.concat(predictions);
+        allActuals = allActuals.concat(y);
+      });
 
-      setResults({ clear: clearResult, cloudy: cloudyResult });
+      const globalRMSE = calculateRMSE(allActuals, allPredictions);
+      setResults({ clusters: clusterResults, globalRMSE: globalRMSE });
     }
   };
 
-  const findBestRegression = () => {
-    if (!results || !results.overall) return;
+  const calculateRMSEForClusterType = (clusterType, modelType) => {
+    const clusters = (() => {
+      if (clusterType === "clima") {
+        return generateClimaClusters();
+      } else if (clusterType === "temperatura") {
+        return generateTemperaturaClusters();
+      } else if (clusterType === "inclinacion") {
+        return generateInclinacionClusters();
+      }
+      return [];
+    })();
 
+    let allPredictions = [];
+    let allActuals = [];
+
+    clusters.forEach((cluster) => {
+      const result = performRegression(cluster.data, modelType);
+      const x = cluster.data.map((d) => d.irradiance);
+      const y = cluster.data.map((d) => d.power);
+      const predictions = x.map((xi) => {
+        if (modelType === "lineal") {
+          return result.coefficients[0] * xi + result.coefficients[1];
+        } else if (modelType === "exponencial") {
+          return result.coefficients[0] * Math.exp(result.coefficients[1] * xi);
+        } else if (modelType === "potencial") {
+          return result.coefficients[0] * Math.pow(xi, result.coefficients[1]);
+        } else if (modelType === "polinomico") {
+          return result.coefficients[0] + result.coefficients[1] * xi + result.coefficients[2] * xi * xi;
+        }
+      });
+      
+      allPredictions = allPredictions.concat(predictions);
+      allActuals = allActuals.concat(y);
+    });
+
+    return calculateRMSE(allActuals, allPredictions);
+  };
+
+  const findBestRegression = () => {
+    // Calcular R² ajustado para cada modelo SIN clusters
     const r2Map = {
-      lineal: performRegression(data, "lineal")?.r2 ?? 0,
-      exponencial: performRegression(data, "exponencial")?.r2 ?? 0,
-      potencial: performRegression(data, "potencial")?.r2 ?? 0,
-      polinomico: performRegression(data, "polinomico")?.r2 ?? 0,
+      lineal: performRegression(data, "lineal")?.adjustedR2 ?? 0,
+      exponencial: performRegression(data, "exponencial")?.adjustedR2 ?? 0,
+      potencial: performRegression(data, "potencial")?.adjustedR2 ?? 0,
+      polinomico: performRegression(data, "polinomico")?.adjustedR2 ?? 0,
     };
 
-    console.log("R² values:", r2Map);
-  
-    const bestType = Object.keys(r2Map).reduce((a, b) =>
-      r2Map[a] >= r2Map[b] ? a : b
-    );
+    // Crear tabla de comparación
+    const comparisonTable = Object.entries(r2Map).map(([type, r2]) => ({
+      type,
+      adjustedR2: r2,
+      params: type === "polinomico" ? 3 : 2,
+    }));
 
-    const best = performRegression(data, bestType);
-    setBestFit({ ...best, type: bestType });
+    // Encontrar el mejor modelo sin clusters
+    // En caso de empate, elige el con menos variables (no polinómico)
+    let bestType = "lineal";
+    let bestR2 = r2Map.lineal;
+
+    for (const [type, r2] of Object.entries(r2Map)) {
+      if (r2 > bestR2) {
+        bestR2 = r2;
+        bestType = type;
+      } else if (r2 === bestR2 && type !== "polinomico" && bestType === "polinomico") {
+        // Si hay empate y el actual no es polinómico pero el mejor sí, cambiar
+        bestType = type;
+      }
+    }
+
+    // Calcular RMSE sin clusters
+    const resultWithoutClusters = performRegression(data, bestType);
+    const rmseWithoutClusters = resultWithoutClusters.rmse;
+
+    // Calcular RMSE para cada tipo de clustering
+    const rmseClimaWithClusters = calculateRMSEForClusterType("clima", bestType);
+    const rmseTemperaturaWithClusters = calculateRMSEForClusterType("temperatura", bestType);
+    const rmseInclinacionWithClusters = calculateRMSEForClusterType("inclinacion", bestType);
+
+    // Tabla de comparación de RMSE
+    const rmseComparisonTable = [
+      {
+        type: "Sin clusters",
+        rmse: rmseWithoutClusters,
+        proportion: 1.0,
+      },
+      {
+        type: "Clima",
+        rmse: rmseClimaWithClusters,
+        proportion: rmseClimaWithClusters / rmseWithoutClusters,
+      },
+      {
+        type: "Temperatura",
+        rmse: rmseTemperaturaWithClusters,
+        proportion: rmseTemperaturaWithClusters / rmseWithoutClusters,
+      },
+      {
+        type: "Inclinación",
+        rmse: rmseInclinacionWithClusters,
+        proportion: rmseInclinacionWithClusters / rmseWithoutClusters,
+      },
+    ];
+
+    // Encontrar el mejor: si proporción está entre 0.9 y 1.1, gana sin clusters
+    let bestConfiguration = rmseComparisonTable[0];
+    for (let i = 1; i < rmseComparisonTable.length; i++) {
+      const current = rmseComparisonTable[i];
+      const proportion = current.proportion;
+      
+      if (proportion >= 0.9 && proportion <= 1.1) {
+        // Proporción dentro del rango, sin clusters gana
+        continue;
+      } else if (current.rmse < bestConfiguration.rmse) {
+        // Fuera del rango, el con menor RMSE gana
+        bestConfiguration = current;
+      }
+    }
+
+    setBestFit({
+      type: bestType,
+      adjustedR2: resultWithoutClusters.adjustedR2,
+      coefficients: resultWithoutClusters.coefficients,
+      rmseWithoutClusters: rmseWithoutClusters,
+      rmseComparisonTable: rmseComparisonTable,
+      bestConfiguration: bestConfiguration,
+      comparisonTable: comparisonTable,
+    });
   };
 
 
@@ -117,6 +329,7 @@ const Resolucion = () => {
 
     const predictions = x.map(predictFunc);
     const rSquared = calculateR2(y, predictions);
+    const rmse = calculateRMSE(y, predictions);
     const adjustedR2 = isNaN(rSquared)
       ? 0
       : 1 - ((1 - rSquared) * (n - 1)) / (n - numParams - 1);
@@ -133,6 +346,7 @@ const Resolucion = () => {
       coefficients: coeffs,
       r2: rSquared,
       adjustedR2: adjustedR2,
+      rmse: rmse,
       curvePoints: curvePoints,
       scatterData: dataset.map((d) => ({
         x: d.irradiance,
@@ -155,9 +369,8 @@ const Resolucion = () => {
   };
 
   const exponentialRegression = (x, y) => {
-    // Solo usar puntos positivos
     const filtered = x.map((xi, i) => ({ xi, yi: y[i] })).filter(p => p.yi > 0);
-    if (filtered.length < 3) return { a: 1, b: 0 }; // Evita crash
+    if (filtered.length < 3) return { a: 1, b: 0 }; 
 
     const lnY = filtered.map((p) => Math.log(p.yi));
     const xVals = filtered.map((p) => p.xi);
@@ -229,6 +442,13 @@ const Resolucion = () => {
     return ssTotal === 0 ? 0 : 1 - ssResidual / ssTotal;
   };
 
+  const calculateRMSE = (actual, predicted) => {
+    if (actual.length === 0) return 0;
+    const squaredErrors = actual.map((yi, i) => Math.pow(yi - predicted[i], 2));
+    const mse = squaredErrors.reduce((a, b) => a + b, 0) / actual.length;
+    return Math.sqrt(mse);
+  };
+
   const formatR2 = (r2) => r2.toFixed(4);
 
   const getR2Color = (r2) => {
@@ -241,44 +461,46 @@ const Resolucion = () => {
   const getPlotData = () => {
     if (!results) return [];
 
-    if (useClusters) {
+    if (useClusters && results.clusters) {
       const traces = [];
+      const colors = [
+        "red",
+        "blue",
+        "green",
+        "orange",
+        "purple",
+        "cyan",
+        "magenta",
+        "yellow",
+      ];
+      let colorIndex = 0;
 
-      if (results.clear) {
+      Object.values(results.clusters).forEach((clusterResult) => {
+        const color = colors[colorIndex % colors.length];
+        const clusterLabel = clusterResult.cluster.label;
+
+        // Scatter plot para el cluster
         traces.push({
-          x: results.clear.scatterData.map((p) => p.x),
-          y: results.clear.scatterData.map((p) => p.y),
+          x: clusterResult.scatterData.map((p) => p.x),
+          y: clusterResult.scatterData.map((p) => p.y),
           mode: "markers",
-          name: "Despejado",
-          marker: { color: "orange", size: 4, opacity: 0.6 },
+          name: clusterLabel,
+          marker: { color: color, size: 4, opacity: 0.6 },
           type: "scattergl",
         });
-        traces.push({
-          x: results.clear.curvePoints.map((p) => p.x),
-          y: results.clear.curvePoints.map((p) => p.y),
-          mode: "lines",
-          name: "Ajuste Despejado",
-          line: { color: "red", width: 2 },
-        });
-      }
 
-      if (results.cloudy) {
+        // Línea de ajuste para el cluster
         traces.push({
-          x: results.cloudy.scatterData.map((p) => p.x),
-          y: results.cloudy.scatterData.map((p) => p.y),
-          mode: "markers",
-          name: "Nublado",
-          marker: { color: "skyblue", size: 4, opacity: 0.6 },
-          type: "scattergl",
-        });
-        traces.push({
-          x: results.cloudy.curvePoints.map((p) => p.x),
-          y: results.cloudy.curvePoints.map((p) => p.y),
+          x: clusterResult.curvePoints.map((p) => p.x),
+          y: clusterResult.curvePoints.map((p) => p.y),
           mode: "lines",
-          name: "Ajuste Nublado",
-          line: { color: "blue", width: 2 },
+          name: `Ajuste: ${clusterLabel}`,
+          line: { color: color, width: 2 },
+          showlegend: false,
         });
-      }
+
+        colorIndex++;
+      });
 
       return traces;
     } else {
@@ -336,20 +558,39 @@ const Resolucion = () => {
               {formatR2(results.overall.adjustedR2)}
             </span>
           </h5>
-        </div>
-      )}
-      {results?.clear && results?.cloudy && useClusters && (
-        <div className="text-center mt-3">
-          <h5>
-            R² ajustado Despejado:{" "}
-            <span className="badge" style={getR2Color(results.clear.adjustedR2)}>
-              {formatR2(results.clear.adjustedR2)}
-            </span>{" "}
-            | R² ajustado Nublado:{" "}
-            <span className="badge" style={getR2Color(results.cloudy.adjustedR2)}>
-              {formatR2(results.cloudy.adjustedR2)}
+          <h5 className="mt-2">
+            RMSE:{" "}
+            <span className="badge bg-info">
+              {results.overall.rmse.toFixed(4)}
             </span>
           </h5>
+        </div>
+      )}
+      {results?.clusters && useClusters && (
+        <div className="text-center mt-3">
+          <h5>Resultados por Cluster:</h5>
+          <div style={{ maxHeight: "300px", overflowY: "auto", marginTop: "10px" }}>
+            {Object.values(results.clusters).map((clusterResult) => (
+              <div key={clusterResult.cluster.key} style={{ marginBottom: "15px" }}>
+                <p>
+                  <strong>{clusterResult.cluster.label}</strong> ({clusterResult.cluster.data.length} puntos)
+                </p>
+                <span className="badge" style={getR2Color(clusterResult.adjustedR2)}>
+                  R² ajustado: {formatR2(clusterResult.adjustedR2)}
+                </span>
+              </div>
+            ))}
+          </div>
+          {results.globalRMSE !== undefined && (
+            <div style={{ marginTop: "15px" }}>
+              <p>
+                <strong>RMSE Global (Con Clusters):</strong>{" "}
+                <span className="badge bg-warning text-dark">
+                  {results.globalRMSE.toFixed(4)}
+                </span>
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -365,6 +606,22 @@ const Resolucion = () => {
           {useClusters ? "Clusters activados" : "Clusters desactivados"}
         </label>
       </div>
+
+      {useClusters && (
+        <div className="text-center mb-4">
+          <ButtonGroup>
+            {["clima", "temperatura", "inclinacion"].map((type) => (
+              <Button
+                key={type}
+                variant={clusterType === type ? "info" : "secondary"}
+                onClick={() => setClusterType(type)}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </Button>
+            ))}
+          </ButtonGroup>
+        </div>
+      )}
 
       {/* === GRÁFICO PLOTLY === */}
       <Plot
@@ -383,34 +640,115 @@ const Resolucion = () => {
         style={{ width: "100%", height: "500px" }}
       />
       {bestFit && (
-  <div className="mt-4 text-center">
-    <h4>🏆 Mejor regresión: {bestFit.type.toUpperCase()}</h4>
-    <p>
-      <strong>R² ajustado:</strong> {formatR2(bestFit.adjustedR2)}
-    </p>
-    <p>
-      <strong>Función:</strong>{" "}
-      {bestFit.type === "lineal"
-        ? `y = ${bestFit.coefficients[0].toFixed(4)}·x + ${bestFit.coefficients[1].toFixed(4)}`
-        : bestFit.type === "exponencial"
-        ? `y = ${bestFit.coefficients[0].toFixed(4)}·e^(${bestFit.coefficients[1].toFixed(4)}·x)`
-        : bestFit.type === "potencial"
-        ? `y = ${bestFit.coefficients[0].toFixed(4)}·x^(${bestFit.coefficients[1].toFixed(4)})`
-        : `y = ${bestFit.coefficients[0].toFixed(4)} + ${bestFit.coefficients[1].toFixed(4)}·x + ${bestFit.coefficients[2].toFixed(6)}·x²`}
-    </p>
-    <p>
-      <strong>Coeficientes:</strong> [
-          {
-              [
-                  bestFit.coefficients[0].toFixed(4), 
-                  bestFit.coefficients[1].toFixed(4), 
-                  bestFit.coefficients[2].toFixed(6)
-              ].join(", ")
-          }
-      ]
-    </p>
-  </div>
-)}
+        <div className="mt-4 text-center">
+          <h4>🏆 Análisis del Mejor Modelo</h4>
+          
+          {/* Tabla de comparación de R² ajustado */}
+          <div className="mt-4">
+            <h5>Comparación de R² Ajustado (Sin Clusters)</h5>
+            <table className="table table-dark table-striped mx-auto" style={{ maxWidth: "500px" }}>
+              <thead>
+                <tr>
+                  <th>Modelo</th>
+                  <th>R² Ajustado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bestFit.comparisonTable.map((row) => (
+                  <tr key={row.type}>
+                    <td>{row.type.charAt(0).toUpperCase() + row.type.slice(1)}</td>
+                    <td>
+                      <span className="badge" style={getR2Color(row.adjustedR2)}>
+                        {row.adjustedR2.toFixed(4)}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Comparación RMSE */}
+          <div className="mt-4">
+            <h5>Comparación RMSE</h5>
+            <table className="table table-dark table-striped mx-auto" style={{ maxWidth: "600px" }}>
+              <thead>
+                <tr>
+                  <th>Configuración</th>
+                  <th>RMSE</th>
+                  <th>Proporción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bestFit.rmseComparisonTable.map((row, idx) => (
+                  <tr key={idx} style={{
+                    backgroundColor: row.type === bestFit.bestConfiguration.type ? "#2a4a2a" : undefined
+                  }}>
+                    <td><strong>{row.type}</strong></td>
+                    <td>
+                      <span className="badge bg-info">{row.rmse.toFixed(4)}</span>
+                    </td>
+                    <td>
+                      {row.proportion === 1.0 ? (
+                        <span>—</span>
+                      ) : (
+                        <span style={{
+                          color: row.proportion >= 0.9 && row.proportion <= 1.1 ? "#ffc107" : undefined
+                        }}>
+                          {row.proportion.toFixed(3)}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-3">
+              <strong>Mejor Configuración:</strong>{" "}
+              <span className="badge bg-success">
+                {bestFit.bestConfiguration.type.toUpperCase()}
+              </span>
+            </p>
+          </div>
+
+          {/* Mejor modelo seleccionado */}
+          <div className="mt-4 p-3" style={{ backgroundColor: "#1a1a1a", borderRadius: "8px" }}>
+            <h5>Modelo Seleccionado: {bestFit.type.toUpperCase()}</h5>
+            <p>
+              <strong>R² Ajustado:</strong> {formatR2(bestFit.adjustedR2)}
+            </p>
+            <p>
+              <strong>RMSE (Sin Clusters):</strong> {bestFit.rmseWithoutClusters.toFixed(4)}
+            </p>
+            
+            {/* Ecuación */}
+            <p className="mt-3">
+              <strong>Función:</strong>
+              <br />
+              {bestFit.type === "lineal"
+                ? `y = ${bestFit.coefficients[0].toFixed(4)}·x + ${bestFit.coefficients[1].toFixed(4)}`
+                : bestFit.type === "exponencial"
+                ? `y = ${bestFit.coefficients[0].toFixed(4)}·e^(${bestFit.coefficients[1].toFixed(4)}·x)`
+                : bestFit.type === "potencial"
+                ? `y = ${bestFit.coefficients[0].toFixed(4)}·x^(${bestFit.coefficients[1].toFixed(4)})`
+                : `y = ${bestFit.coefficients[0].toFixed(4)} + ${bestFit.coefficients[1].toFixed(4)}·x + ${bestFit.coefficients[2].toFixed(6)}·x²`}
+            </p>
+
+            {/* Coeficientes */}
+            <p className="mt-2">
+              <strong>Coeficientes:</strong>
+              <br />
+              {bestFit.type === "lineal"
+                ? `a = ${bestFit.coefficients[0].toFixed(6)}, b = ${bestFit.coefficients[1].toFixed(6)}`
+                : bestFit.type === "exponencial"
+                ? `a = ${bestFit.coefficients[0].toFixed(6)}, b = ${bestFit.coefficients[1].toFixed(6)}`
+                : bestFit.type === "potencial"
+                ? `a = ${bestFit.coefficients[0].toFixed(6)}, b = ${bestFit.coefficients[1].toFixed(6)}`
+                : `a = ${bestFit.coefficients[0].toFixed(6)}, b = ${bestFit.coefficients[1].toFixed(6)}, c = ${bestFit.coefficients[2].toFixed(6)}`}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
