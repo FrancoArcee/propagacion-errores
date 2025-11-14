@@ -1,22 +1,18 @@
 :root {
-  --primary-green: #36A552;
-  --primary-green-dark: #2e9148;
-  --primary-green-light: #4bc065;
-  --accent-yellow: #fbbf24;
-  --text-light: #f3f4f6;
-  --text-white: #ffffff;
-  --text-dark: #333333;
-  --text-muted: #555555;
-  --bg-light: #ffffff;
-  --border-color: #e5e7eb;
+  --step3-primary-green: #36A552;
+  --step3-primary-green-light: #4bc065;
+  --step3-text-dark: #333333;
+  --step3-text-muted: #555555;
+  --step3-bg-light: #ffffff;
+  --step3-border-color: #e5e7eb;
 }
 
-/* --- Layout Principal --- */
+/* Layout Principal */
 .step3-container {
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background: var(--bg-light);
+  background: var(--step3-bg-light);
 }
 
 .step3-right {
@@ -33,120 +29,118 @@
 .step3-right h3 {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--step3-text-dark);
   margin-bottom: 1.5rem;
 }
 
-/* --- Tabs --- */
-.form-tabs {
+/* Tabs */
+.step3-tabs {
   display: flex;
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--step3-border-color);
   margin-bottom: 2rem;
 }
-.tab-btn {
+.step3-tab-btn {
   background: none;
   border: none;
   padding: 0.8rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  color: var(--text-muted);
+  color: var(--step3-text-muted);
   border-bottom: 3px solid transparent;
   transform: translateY(2px);
 }
-.tab-btn.active {
-  color: var(--primary-green);
-  border-bottom-color: var(--primary-green);
+.step3-tab-btn.active {
+  color: var(--step3-primary-green);
+  border-bottom-color: var(--step3-primary-green);
 }
 
-/* --- Formulario --- */
-.form-group {
+/* Formulario */
+.step3-form-group {
   margin-bottom: 2rem;
 }
-.form-group label {
+.step3-form-group label {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--step3-text-muted);
   margin-bottom: 0.5rem;
 }
-.input-with-unit {
+.step3-input-with-unit {
   position: relative;
 }
-.input-with-unit input {
+.step3-input-with-unit input {
   width: 100%;
   padding: 1rem 4rem 1rem 1.5rem;
   font-size: 1.1rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--step3-border-color);
   border-radius: 12px;
   transition: border-color 0.3s;
 }
-.input-with-unit input:focus {
+.step3-input-with-unit input:focus {
   outline: none;
-  border-color: var(--primary-green);
+  border-color: var(--step3-primary-green);
 }
-.input-unit {
+.step3-input-unit {
   position: absolute;
   right: 1.5rem;
   top: 50%;
   transform: translateY(-50%);
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--step3-text-muted);
 }
 
-/* --- Radio buttons --- */
-.form-group-columns {
+/* Radios */
+.step3-form-columns {
   display: flex;
   gap: 3rem;
 }
-.radio-group label {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  display: block;
-  margin-bottom: 0.5rem;
-}
-.radio-options.vertical {
+
+.step3-radio-options {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.radio-options.vertical label {
+
+.step3-form-check {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
-.radio-options.vertical input {
-  accent-color: var(--primary-green);
-  width: 1.25em;
-  height: 1.25em;
-}
-.radio-options.vertical label:hover {
-  background-color: #f4f4f4;
+  gap: 0.5rem; /* espacio entre radio y texto */
+  margin-bottom: 0.25rem; /* espacio vertical entre radios */
 }
 
-/* --- Botones de navegación --- */
-.nav-buttons {
+.step3-form-check-input {
+  accent-color: var(--step3-primary-green);
+  width: 1.25em;
+  height: 1.25em;
+  cursor: pointer;
+  margin: 0; /* elimina margen extra del input */
+}
+
+.step3-form-check-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--step3-text-dark);
+  cursor: pointer;
+  margin: 0; /* texto alineado al radio */
+}
+
+/* Botones de navegación */
+.step3-nav-buttons {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 3rem;
   padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--step3-border-color);
 }
-.intro-btn {
+.step3-intro-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-light));
+  background: linear-gradient(135deg, var(--step3-primary-green), var(--step3-primary-green-light));
   color: #fff;
   border: none;
   border-radius: 50px;
@@ -158,25 +152,25 @@
   box-shadow: 0 8px 25px rgba(54, 165, 82, 0.4);
   text-decoration: none;
 }
-.intro-btn:hover {
+.step3-intro-btn:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 12px 35px rgba(54, 165, 82, 0.6);
 }
-.btn-secondary {
+.step3-btn-secondary {
   background: transparent;
-  color: var(--text-dark);
-  border: 2px solid var(--border-color);
+  color: var(--step3-text-dark);
+  border: 2px solid var(--step3-border-color);
   padding: 1rem 2.5rem;
   border-radius: 50px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
 }
-.btn-secondary:hover {
-  background: var(--border-color);
+.step3-btn-secondary:hover {
+  background: var(--step3-border-color);
 }
 
-/* --- Responsivo --- */
+/* Responsivo */
 @media (max-width: 900px) {
   .step3-container {
     flex-direction: column;
@@ -184,15 +178,15 @@
   .step3-right {
     padding: 2.5rem;
   }
-  .form-group-columns {
+  .step3-form-columns {
     flex-direction: column;
     gap: 1.5rem;
   }
-  .nav-buttons {
+  .step3-nav-buttons {
     flex-direction: column-reverse;
     gap: 1rem;
   }
-  .intro-btn, .btn-secondary {
+  .step3-intro-btn, .step3-btn-secondary {
     width: 100%;
     justify-content: center;
   }

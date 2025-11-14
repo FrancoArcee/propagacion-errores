@@ -103,13 +103,13 @@ function Step2() {
 
                   <input
                     type="radio"
-                    id="bi-mesual"
+                    id="bi-mensual"
                     name="periodo"
-                    value="bi-mesual"
-                    checked={periodo === "bi-mesual"}
+                    value="bi-mensual"
+                    checked={periodo === "bi-mensual"}
                     onChange={(e) => setPeriodo(e.target.value)}
                   />
-                  <label htmlFor="bi-mesual">Bi-mesual</label>
+                  <label htmlFor="bi-mesual">Bi-mensual</label>
 
                   <input
                     type="radio"

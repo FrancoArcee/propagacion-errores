@@ -1,75 +1,286 @@
+:root {
+  --primary-green: #36A552;
+  --primary-green-dark: #2e9148;
+  --primary-green-light: #4bc065;
+  --accent-yellow: #fbbf24;
+  --text-light: #f3f4f6;
+  --text-white: #ffffff;
+  --text-dark: #333333;
+  --text-muted: #555555;
+  --bg-light: #ffffff;
+  --border-color: #e5e7eb;
+}
+
+/* --- Layout Principal --- */
 .step1-container {
   display: flex;
-  height: 100vh;
-  background-color: #f9fafb;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg-light);
 }
 
 .step1-right {
-  flex: 1;
+  flex-basis: 70%;
+  padding: 3rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  justify-content: flex-start;
+  max-width: 900px;
+  margin: 0 auto;
+  margin-top: 3rem;
 }
 
-/* Contenedor informativo (reemplazo del mapa) */
-.placeholder-info {
-  text-align: center;
-  margin-bottom: 2rem;
+.step1-right h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
 }
 
-.placeholder-info h3 {
-  font-size: 1.8rem;
-  color: var(--primary-green-dark);
+/* --- Sección de Búsqueda --- */
+.search-section {
+  margin-bottom: 1.5rem;
 }
 
-.placeholder-info p {
+.search-bar {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 3.5rem 1rem 1.5rem;
   font-size: 1rem;
-  color: #555;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  transition: border-color 0.3s;
 }
 
-/* Botones */
-.map-buttons {
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-green);
+}
+
+.search-icon-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--text-muted);
+  transition: color 0.3s;
+}
+
+.search-icon-btn:hover {
+  color: var(--primary-green);
+}
+
+.search-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* --- Botones de Tipo de Mapa --- */
+.map-type-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.map-type-btn {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 2px solid var(--primary-green);
+  border-radius: 50px;
+  background: transparent;
+  color: var(--primary-green);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.map-type-btn.active {
+  background: var(--primary-green);
+  color: var(--text-white);
+}
+
+.map-type-btn:hover:not(.active) {
+  background: rgba(54, 165, 82, 0.1);
+}
+
+/* --- Mapa Container - MÁS GRANDE --- */
+.map-container {
+  width: 100%;
+  height: 600px;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-color);
+  position: relative;
+  z-index: 1;
+}
+
+/* Fix para que el mapa se vea correctamente */
+.map-container .leaflet-container {
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* --- Info Alert --- */
+.info-alert {
   display: flex;
   gap: 1rem;
+  background: rgba(26, 26, 26, 0.95);
+  color: var(--text-white);
+  padding: 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.btn-secondary {
-  background-color: #e5e7eb;
-  color: #111827;
-  padding: 0.7rem 1.5rem;
-  border: none;
+.alert-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #60d4f4;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.alert-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* --- Info de ubicación seleccionada --- */
+.selected-info {
+  background: rgba(54, 165, 82, 0.1);
+  border-left: 4px solid var(--primary-green);
+  padding: 1rem;
   border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-bottom: 1.5rem;
 }
 
-.btn-secondary:hover {
-  background-color: #d1d5db;
+.selected-info p {
+  margin: 0.25rem 0;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+.selected-info p:first-child {
+  font-weight: 600;
+}
+
+/* --- Botones de navegación --- */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
 }
 
 .intro-btn {
-  background-color: var(--primary-green);
-  color: white;
-  padding: 0.7rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-light));
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 50px;
+  padding: 1.1rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(54, 165, 82, 0.4);
+  text-decoration: none;
 }
 
-.intro-btn:hover {
-  background-color: var(--primary-green-dark);
+.intro-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(54, 165, 82, 0.6);
 }
 
+.intro-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
 
-/* Responsive */
+.btn-secondary {
+  background: transparent;
+  color: var(--text-dark);
+  border: 2px solid var(--border-color);
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.btn-secondary:hover {
+  background: var(--border-color);
+}
+
+/* --- Responsivo --- */
 @media (max-width: 900px) {
-  .step-sidebar {
-    flex-basis: auto;
-    padding: 2rem;
+  .step1-container {
+    flex-direction: column;
+  }
+  
+  .step1-right {
+    padding: 2.5rem;
+    margin-top: 2rem;
+  }
+  
+  .map-container {
+    height: 500px;
+  }
+  
+  .nav-buttons {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+  
+  .intro-btn, .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .map-type-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .step1-right {
+    padding: 1.5rem;
+  }
+  
+  .step1-right h3 {
+    font-size: 1.5rem;
+  }
+  
+  .search-input {
+    font-size: 0.9rem;
+  }
+  
+  .map-container {
+    height: 400px;
+  }
+  
+  .info-alert {
+    padding: 1rem;
+  }
+  
+  .alert-text {
+    font-size: 0.85rem;
   }
 }
