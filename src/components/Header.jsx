@@ -110,7 +110,7 @@ export default function Header() {
           className={({ isActive }) => (isActive ? "nav-link nav-link-contact active" : "nav-link nav-link-contact")}
           onClick={handleNavClick}
         >
-          Contacto
+          Contactanos
         </NavLink>
       </nav>
     </header>
