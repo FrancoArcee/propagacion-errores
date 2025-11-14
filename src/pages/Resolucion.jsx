@@ -9,6 +9,7 @@ const Resolucion = () => {
   const [fitType, setFitType] = useState("exponencial");
   const [useClusters, setUseClusters] = useState(false);
   const [clusterType, setClusterType] = useState("clima");
+  const [graphType, setGraphType] = useState("potencia");
   const [results, setResults] = useState(null);
   const [bestFit, setBestFit] = useState(null);
 
@@ -19,7 +20,7 @@ const Resolucion = () => {
 
   useEffect(() => {
     if (data.length > 0) calculateRegression();
-  }, [data, fitType, useClusters, clusterType]);
+  }, [data, fitType, useClusters, clusterType, graphType]);
 
   const loadData = async () => {
     try {
@@ -30,22 +31,42 @@ const Resolucion = () => {
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
       const parsed = jsonData
-        .map((row) => ({
-          irradiance: parseFloat(
+        .map((row) => {
+          // Parsear irradiancia (coma como decimal)
+          const irradiance = parseFloat(
             String(row.irradiance_Wm2 || row["irradiance_Wm2"]).replace(",", ".")
-          ),
-          power: parseFloat(
-            String(row.pv_power_kW || row["pv_power_kW"]).replace(",", ".")
-          ),
-          skyState: row.sky_state || row["sky_state"],
-          inclinacion: parseFloat(
-            String(row["inclinacion"] || row.inclinacion_).replace(",", ".")
-          ),
-          temperatura: parseFloat(
-            String(row["temperatura_ambiental"] || row.temperatura_ambiental_C).replace(",", ".")
-          ),
-        }))
-        .filter((d) => !isNaN(d.irradiance) && !isNaN(d.power));
+          );
+          
+          // Parsear potencia (kW, eliminar comas de miles)
+          const power = parseFloat(
+            String(row.pv_power_kW || row["pv_power_kW"]).replace(/,/g, ".")
+          );
+          
+          // Parsear generación (W, eliminar comas de miles, convertir a kW)
+          const generacionW = parseFloat(
+            String(row.generacion_W || row["generacion_W"]).replace(/,/g, "")
+          );
+          const generacionKW = generacionW / 1000;
+          
+          return {
+            irradiance,
+            power,
+            generacionKW,
+            skyState: row.sky_state || row["sky_state"],
+            inclinacion: parseFloat(
+              String(row["inclinacion"] || row.inclinacion_).replace(",", ".")
+            ),
+            temperatura: parseFloat(
+              String(row["temperatura_ambiental"] || row.temperatura_ambiental_C).replace(",", ".")
+            ),
+          };
+        })
+        // Filtro: si alguna columna importante está en 0 o es NaN, no se carga
+        .filter((d) => 
+          !isNaN(d.irradiance) && !isNaN(d.power) && !isNaN(d.generacionKW) &&
+          d.irradiance !== 0 && d.power !== 0 && d.generacionKW !== 0
+        );
+      
       console.log("Loaded data:", parsed);
       setData(parsed);
     } catch (error) {
@@ -161,7 +182,14 @@ const Resolucion = () => {
       });
 
       const globalRMSE = calculateRMSE(allActuals, allPredictions);
-      setResults({ clusters: clusterResults, globalRMSE: globalRMSE });
+      // Obtener los labels del primer cluster para usarlos en el gráfico
+      const firstCluster = Object.values(clusterResults)[0];
+      setResults({ 
+        clusters: clusterResults, 
+        globalRMSE: globalRMSE,
+        xLabel: firstCluster?.xLabel,
+        yLabel: firstCluster?.yLabel,
+      });
     }
   };
 
@@ -298,8 +326,20 @@ const Resolucion = () => {
     const n = dataset.length;
     if (n === 0) return null;
 
-    const x = dataset.map((d) => d.irradiance);
-    const y = dataset.map((d) => d.power);
+    // Seleccionar datos según el tipo de gráfico
+    let x, y, xLabel, yLabel;
+    
+    if (graphType === "potencia") {
+      x = dataset.map((d) => d.irradiance);
+      y = dataset.map((d) => d.power);
+      xLabel = "Irradiancia (W/m²)";
+      yLabel = "Potencia (kW)";
+    } else if (graphType === "generacion") {
+      x = dataset.map((d) => d.power);
+      y = dataset.map((d) => d.generacionKW);
+      xLabel = "Potencia (kW)";
+      yLabel = "Generación (kW)";
+    }
 
     let coeffs = [];
     let predictFunc = null;
@@ -349,10 +389,12 @@ const Resolucion = () => {
       rmse: rmse,
       curvePoints: curvePoints,
       scatterData: dataset.map((d) => ({
-        x: d.irradiance,
-        y: d.power,
+        x: graphType === "potencia" ? d.irradiance : d.power,
+        y: graphType === "potencia" ? d.power : d.generacionKW,
         skyState: d.skyState,
       })),
+      xLabel: xLabel,
+      yLabel: yLabel,
     };
   };
 
@@ -524,7 +566,7 @@ const Resolucion = () => {
       ];
     }
   };
-  const plotData = useMemo(() => getPlotData(), [results, useClusters]);
+  const plotData = useMemo(() => getPlotData(), [results, useClusters, graphType]);
   
   return (
     <div className="min-h-screen bg-dark text-white p-4">
@@ -545,7 +587,11 @@ const Resolucion = () => {
       </div>
 
       <div className="text-center mb-3">
-        <Button variant="success" onClick={findBestRegression}>
+        <Button 
+          variant="success" 
+          onClick={findBestRegression}
+          disabled={graphType === "generacion"}
+        >
           Calcular mejor regresión
         </Button>
       </div>
@@ -623,6 +669,20 @@ const Resolucion = () => {
         </div>
       )}
 
+      <div className="text-center mb-4">
+        <ButtonGroup>
+          {["potencia", "generacion"].map((type) => (
+            <Button
+              key={type}
+              variant={graphType === type ? "success" : "secondary"}
+              onClick={() => setGraphType(type)}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </div>
+
       {/* === GRÁFICO PLOTLY === */}
       <Plot
         data={plotData}
@@ -630,8 +690,8 @@ const Resolucion = () => {
           paper_bgcolor: "#222",
           plot_bgcolor: "#222",
           font: { color: "#fff" },
-          xaxis: { title: { text: "Irradiancia (W/m²)", font: { size: 18 } } },
-          yaxis: { title: {text: "Potencia (kW)", font: { size: 18 } }},
+          xaxis: { title: { text: results?.xLabel || results?.overall?.xLabel || "X", font: { size: 18 } } },
+          yaxis: { title: { text: results?.yLabel || results?.overall?.yLabel || "Y", font: { size: 18 } } },
           legend: { orientation: "h", y: -0.2 },
           margin: { t: 40, l: 60, r: 30, b: 60 },
           height: 500,
@@ -747,6 +807,59 @@ const Resolucion = () => {
                 : `a = ${bestFit.coefficients[0].toFixed(6)}, b = ${bestFit.coefficients[1].toFixed(6)}, c = ${bestFit.coefficients[2].toFixed(6)}`}
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Coeficientes del ajuste actual */}
+      {results && !bestFit && (
+        <div className="mt-4 p-3" style={{ backgroundColor: "#1a1a1a", borderRadius: "8px" }}>
+          <h5>Coeficientes del Ajuste Actual ({fitType.toUpperCase()})</h5>
+          
+          {!useClusters && results.overall && (
+            <div className="mt-3">
+              <p>
+                <strong>Función:</strong>
+                <br />
+                {fitType === "lineal"
+                  ? `y = ${results.overall.coefficients[0].toFixed(4)}·x + ${results.overall.coefficients[1].toFixed(4)}`
+                  : fitType === "exponencial"
+                  ? `y = ${results.overall.coefficients[0].toFixed(4)}·e^(${results.overall.coefficients[1].toFixed(4)}·x)`
+                  : fitType === "potencial"
+                  ? `y = ${results.overall.coefficients[0].toFixed(4)}·x^(${results.overall.coefficients[1].toFixed(4)})`
+                  : `y = ${results.overall.coefficients[0].toFixed(4)} + ${results.overall.coefficients[1].toFixed(4)}·x + ${results.overall.coefficients[2].toFixed(6)}·x²`}
+              </p>
+              <p>
+                <strong>Coeficientes:</strong>
+                <br />
+                {fitType === "lineal"
+                  ? `a = ${results.overall.coefficients[0].toFixed(6)}, b = ${results.overall.coefficients[1].toFixed(6)}`
+                  : fitType === "exponencial"
+                  ? `a = ${results.overall.coefficients[0].toFixed(6)}, b = ${results.overall.coefficients[1].toFixed(6)}`
+                  : fitType === "potencial"
+                  ? `a = ${results.overall.coefficients[0].toFixed(6)}, b = ${results.overall.coefficients[1].toFixed(6)}`
+                  : `a = ${results.overall.coefficients[0].toFixed(6)}, b = ${results.overall.coefficients[1].toFixed(6)}, c = ${results.overall.coefficients[2].toFixed(6)}`}
+              </p>
+            </div>
+          )}
+
+          {useClusters && results.clusters && (
+            <div className="mt-3">
+              {Object.values(results.clusters).map((clusterResult) => (
+                <div key={clusterResult.cluster.key} className="mb-4 p-2" style={{ backgroundColor: "#2a2a2a", borderRadius: "5px" }}>
+                  <p><strong>{clusterResult.cluster.label}</strong></p>
+                  <p>
+                    {fitType === "lineal"
+                      ? `y = ${clusterResult.coefficients[0].toFixed(4)}·x + ${clusterResult.coefficients[1].toFixed(4)}`
+                      : fitType === "exponencial"
+                      ? `y = ${clusterResult.coefficients[0].toFixed(4)}·e^(${clusterResult.coefficients[1].toFixed(4)}·x)`
+                      : fitType === "potencial"
+                      ? `y = ${clusterResult.coefficients[0].toFixed(4)}·x^(${clusterResult.coefficients[1].toFixed(4)})`
+                      : `y = ${clusterResult.coefficients[0].toFixed(4)} + ${clusterResult.coefficients[1].toFixed(4)}·x + ${clusterResult.coefficients[2].toFixed(6)}·x²`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
