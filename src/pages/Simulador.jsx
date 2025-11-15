@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './styles/Step1.css';
 import { StepSideBar } from '../components/StepSideBar';
+import { obtenerDatosSolares } from '../utils/solarData';
 
 // Fix para el icono del marcador en Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -15,7 +16,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Componente para manejar clicks en el mapa
-function LocationMarker({ position, setPosition, setSearchInput }) {
+function LocationMarker({ position, setPosition, setSearchInput, onLocationSelect }) {
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
@@ -30,6 +31,11 @@ function LocationMarker({ position, setPosition, setSearchInput }) {
           }
         })
         .catch(err => console.error('Error en geocodificación:', err));
+      
+      // Llamar a la función callback para obtener datos solares
+      if (onLocationSelect) {
+        onLocationSelect(lat, lng);
+      }
     },
   });
 
@@ -41,22 +47,46 @@ function Simulador() {
   const [position, setPosition] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [mapType, setMapType] = useState('roadmap');
+  const [loadingSolarData, setLoadingSolarData] = useState(false);
+  const [solarData, setSolarData] = useState(null);
   const mapRef = useRef(null);
   const navigate = useNavigate();
+
+  // Función para obtener y guardar datos solares cuando se selecciona una ubicación
+  const obtenerYGuardarDatosSolares = async (lat, lng) => {
+    setLoadingSolarData(true);
+    try {
+      const datosSolares = await obtenerDatosSolares(lat, lng);
+      setSolarData(datosSolares);
+      return datosSolares;
+    } catch (error) {
+      console.error('Error al obtener datos solares:', error);
+      // Retornar valores por defecto si hay error
+      const defaultData = {
+        irradiancia: 800,
+        hspAnual: 1800
+      };
+      setSolarData(defaultData);
+      return defaultData;
+    } finally {
+      setLoadingSolarData(false);
+    }
+  };
 
   // Cachear ubicación con useMemo
   const cachedLocation = useMemo(() => {
     if (position && searchInput) {
       const locationData = {
         address: searchInput,
-        coordinates: { lat: position[0], lng: position[1] }
+        coordinates: { lat: position[0], lng: position[1] },
+        solarData: solarData
       };
       // Guardar automáticamente en localStorage
       localStorage.setItem('selectedLocation', JSON.stringify(locationData));
       return locationData;
     }
     return null;
-  }, [position, searchInput]);
+  }, [position, searchInput, solarData]);
 
   // Buscar dirección
   const handleSearch = async () => {
@@ -76,6 +106,17 @@ function Simulador() {
         if (mapRef.current) {
           mapRef.current.flyTo(newPosition, 18);
         }
+        
+        // Obtener datos solares para esta ubicación
+        const datosSolares = await obtenerYGuardarDatosSolares(parseFloat(lat), parseFloat(lon));
+        
+        // Guardar datos solares en localStorage
+        const locationData = {
+          address: searchInput,
+          coordinates: { lat: parseFloat(lat), lng: parseFloat(lon) },
+          solarData: datosSolares
+        };
+        localStorage.setItem('selectedLocation', JSON.stringify(locationData));
       }
     } catch (error) {
       console.error('Error en la búsqueda:', error);
@@ -84,9 +125,32 @@ function Simulador() {
 
   const handleBack = () => navigate('/simulador');
 
-  const handleConfirm = () => {
+  const handleLocationClick = async (lat, lng) => {
+    // Obtener datos solares cuando se hace click en el mapa
+    const datosSolares = await obtenerYGuardarDatosSolares(lat, lng);
+    
+    // Actualizar localStorage con los datos solares
+    const locationData = JSON.parse(localStorage.getItem('selectedLocation')) || {};
+    locationData.solarData = datosSolares;
+    localStorage.setItem('selectedLocation', JSON.stringify(locationData));
+  };
+
+  const handleConfirm = async () => {
     if (cachedLocation) {
-      // Ya está en localStorage gracias a useMemo
+      const { lat, lng } = cachedLocation.coordinates;
+      
+      // Asegurarse de que tenemos datos solares antes de continuar
+      if (!cachedLocation.solarData) {
+        setLoadingSolarData(true);
+        const datosSolares = await obtenerYGuardarDatosSolares(lat, lng);
+        const locationData = {
+          ...cachedLocation,
+          solarData: datosSolares
+        };
+        localStorage.setItem('selectedLocation', JSON.stringify(locationData));
+        setLoadingSolarData(false);
+      }
+      
       navigate('/step1');
     }
   };
@@ -159,6 +223,7 @@ function Simulador() {
               position={position} 
               setPosition={setPosition}
               setSearchInput={setSearchInput}
+              onLocationSelect={handleLocationClick}
             />
           </MapContainer>
         </div>
@@ -168,6 +233,21 @@ function Simulador() {
           <div className="selected-info">
             <p><strong>Ubicación seleccionada:</strong></p>
             <p>Latitud: {position[0].toFixed(6)}, Longitud: {position[1].toFixed(6)}</p>
+            {loadingSolarData && (
+              <p style={{ color: '#36A552', marginTop: '0.5rem' }}>
+                Obteniendo datos solares...
+              </p>
+            )}
+            {cachedLocation?.solarData && !loadingSolarData && (
+              <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#f0f9ff', borderRadius: '6px' }}>
+                <p style={{ fontSize: '0.85rem', margin: '0.2rem 0' }}>
+                  <strong>Irradiancia:</strong> {cachedLocation.solarData.irradiancia} W/m²
+                </p>
+                <p style={{ fontSize: '0.85rem', margin: '0.2rem 0' }}>
+                  <strong>HSP anual:</strong> {cachedLocation.solarData.hspAnual} horas
+                </p>
+              </div>
+            )}
           </div>
         )}
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './styles/Step4.css'; // Importamos el CSS separado
 import { calcularFinal } from '../utils/calculos';
+import { obtenerDatosSolares } from '../utils/solarData';
 
 // --- Iconos SVG ---
 const IconPanels = () => (
@@ -34,15 +35,24 @@ const IconRecovery = () => (
 const formatARS = (value) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(value);
 const formatNumber = (value) => new Intl.NumberFormat('es-AR').format(value);
 
-// Función para obtener irradiancia y HSP basado en coordenadas (valores por defecto para Argentina)
-// En una implementación real, esto vendría de una API
-function obtenerDatosSolares(lat, lng) {
-  // Valores por defecto para Argentina (aproximados)
-  // Buenos Aires: ~800 W/m² de irradiancia promedio, ~1800 HSP anual
-  // Estos valores deberían venir de una API en producción
+// Función helper para obtener datos solares desde localStorage o calcularlos
+async function obtenerDatosSolaresParaCalculo(lat, lng) {
+  // Primero intentar obtener desde localStorage (ya calculados en Simulador)
+  const locationData = JSON.parse(localStorage.getItem('selectedLocation')) || {};
+  
+  if (locationData.solarData) {
+    return locationData.solarData;
+  }
+  
+  // Si no están en localStorage, obtenerlos ahora
+  if (lat && lng) {
+    return await obtenerDatosSolares(lat, lng);
+  }
+  
+  // Valores por defecto si no hay coordenadas
   return {
-    irradiancia: 800, // W/m² (valor promedio para Argentina)
-    hspAnual: 1800 // horas (valor promedio para Argentina)
+    irradiancia: 800,
+    hspAnual: 1800
   };
 }
 
@@ -54,7 +64,8 @@ function Step4() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    try {
+    const calcular = async () => {
+      try {
       // Leer datos de localStorage
       const appCache = JSON.parse(localStorage.getItem('appCache')) || {};
       const step2Data = JSON.parse(localStorage.getItem('step2Data')) || {};
@@ -84,9 +95,8 @@ function Step4() {
 
       // Obtener irradiancia y HSP basado en ubicación
       const { lat, lng } = locationData.coordinates || {};
-      const { irradiancia, hspAnual } = lat && lng 
-        ? obtenerDatosSolares(lat, lng)
-        : obtenerDatosSolares(-34.6037, -58.3816); // Default: Buenos Aires
+      const datosSolares = await obtenerDatosSolaresParaCalculo(lat || -34.6037, lng || -58.3816);
+      const { irradiancia, hspAnual } = datosSolares;
 
       // Validar que tengamos los datos necesarios
       if (!consumoMensual || !superficie || !costoMensual) {
@@ -123,11 +133,14 @@ function Step4() {
       });
 
       setLoading(false);
-    } catch (err) {
-      console.error('Error en cálculo:', err);
-      setError('Ocurrió un error al calcular los resultados.');
-      setLoading(false);
-    }
+      } catch (err) {
+        console.error('Error en cálculo:', err);
+        setError('Ocurrió un error al calcular los resultados.');
+        setLoading(false);
+      }
+    };
+    
+    calcular();
   }, []);
 
   const minAnos = 0;
