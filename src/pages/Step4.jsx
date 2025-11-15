@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './styles/Step4.css'; // Importamos el CSS separado
+import { calcularFinal } from '../utils/calculos';
 
 // --- Iconos SVG ---
 const IconPanels = () => (
@@ -29,23 +30,166 @@ const IconRecovery = () => (
   </svg>
 );
 
-// --- Datos y helpers ---
-const calculos = {
-  numPaneles: 52,
-  energiaProducida: 42150, // kWh/año
-  ahorroAnual: 1850000, // ARS
-  periodoRecuperacion: 4.5, // años
-  valorInstalacion: 8300000, // ARS
-};
+// --- Helpers ---
 const formatARS = (value) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(value);
 const formatNumber = (value) => new Intl.NumberFormat('es-AR').format(value);
+
+// Función para obtener irradiancia y HSP basado en coordenadas (valores por defecto para Argentina)
+// En una implementación real, esto vendría de una API
+function obtenerDatosSolares(lat, lng) {
+  // Valores por defecto para Argentina (aproximados)
+  // Buenos Aires: ~800 W/m² de irradiancia promedio, ~1800 HSP anual
+  // Estos valores deberían venir de una API en producción
+  return {
+    irradiancia: 800, // W/m² (valor promedio para Argentina)
+    hspAnual: 1800 // horas (valor promedio para Argentina)
+  };
+}
 
 // --- Componente Step4 ---
 function Step4() {
   const navigate = useNavigate();
+  const [calculos, setCalculos] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    try {
+      // Leer datos de localStorage
+      const appCache = JSON.parse(localStorage.getItem('appCache')) || {};
+      const step2Data = JSON.parse(localStorage.getItem('step2Data')) || {};
+      const step3Data = appCache.step3 || {};
+      const locationData = JSON.parse(localStorage.getItem('selectedLocation')) || {};
+
+      // Obtener datos del paso 2
+      const consumoMensual = parseFloat(step2Data.gastoKwh) || 0;
+      const superficie = parseFloat(step2Data.superficie) || 0;
+      
+      // Obtener datos del paso 3
+      let costoMensual = parseFloat(step3Data.gastoArs) || 0;
+      const periodo = step3Data.periodo || 'mensual';
+      const incluyeIva = step3Data.incluyeIva !== false; // default true
+
+      // Ajustar costo según período
+      if (periodo === 'anual') {
+        costoMensual = costoMensual / 12;
+      } else if (periodo === 'bi-mesual' || periodo === 'bi-mensual') {
+        costoMensual = costoMensual / 2;
+      }
+
+      // Ajustar IVA si no está incluido (agregar 21%)
+      if (!incluyeIva) {
+        costoMensual = costoMensual * 1.21;
+      }
+
+      // Obtener irradiancia y HSP basado en ubicación
+      const { lat, lng } = locationData.coordinates || {};
+      const { irradiancia, hspAnual } = lat && lng 
+        ? obtenerDatosSolares(lat, lng)
+        : obtenerDatosSolares(-34.6037, -58.3816); // Default: Buenos Aires
+
+      // Validar que tengamos los datos necesarios
+      if (!consumoMensual || !superficie || !costoMensual) {
+        setError('Faltan datos necesarios para el cálculo. Por favor, completa todos los pasos.');
+        setLoading(false);
+        return;
+      }
+
+      // Realizar cálculo
+      const resultado = calcularFinal({
+        irradiancia,
+        hspAnual,
+        superficieDisponible: superficie,
+        costoEnergeticoMensual: costoMensual,
+        consumoEnergeticoMensual: consumoMensual
+      });
+
+      if (!resultado) {
+        setError('No se pudo calcular una solución. La superficie disponible podría ser insuficiente.');
+        setLoading(false);
+        return;
+      }
+
+      // Convertir tiempo de recuperación de meses a años para mostrar
+      const periodoRecuperacionAnos = resultado.tiempoRecuperacionMeses / 12;
+
+      setCalculos({
+        numPaneles: resultado.numeroPaneles,
+        energiaProducida: Math.round(resultado.energiaProducidaAnual),
+        ahorroAnual: Math.round(resultado.ahorroAnual),
+        periodoRecuperacion: periodoRecuperacionAnos,
+        valorInstalacion: resultado.costoTotal,
+        categoria: resultado.categoria
+      });
+
+      setLoading(false);
+    } catch (err) {
+      console.error('Error en cálculo:', err);
+      setError('Ocurrió un error al calcular los resultados.');
+      setLoading(false);
+    }
+  }, []);
+
   const minAnos = 0;
   const maxAnos = 8;
-  const recoveryPercent = (calculos.periodoRecuperacion / maxAnos) * 100;
+  const recoveryPercent = calculos ? (calculos.periodoRecuperacion / maxAnos) * 100 : 0;
+
+  if (loading) {
+    return (
+      <div className="step4-container">
+        <div className="step4-left">
+          <h2>Calculando tu solución...</h2>
+          <p>Por favor espera mientras procesamos tus datos.</p>
+        </div>
+        <div className="step4-right">
+          <div className="system-card">
+            <p>Cargando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="step4-container">
+        <div className="step4-left">
+          <h2>Error en el cálculo</h2>
+          <p>{error}</p>
+          <Link to="/simulador" className="step4-change-link">
+            VOLVER AL INICIO &gt;
+          </Link>
+        </div>
+        <div className="step4-right">
+          <div className="system-card">
+            <p style={{ color: 'red' }}>{error}</p>
+            <div className="nav-buttons">
+              <button className="btn-secondary" onClick={() => navigate('/step3')}>VOLVER</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!calculos) {
+    return (
+      <div className="step4-container">
+        <div className="step4-left">
+          <h2>No hay datos</h2>
+          <p>No se encontraron datos para calcular.</p>
+        </div>
+        <div className="step4-right">
+          <div className="system-card">
+            <p>Por favor, completa todos los pasos del simulador.</p>
+            <div className="nav-buttons">
+              <button className="btn-secondary" onClick={() => navigate('/simulador')}>VOLVER AL INICIO</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="step4-container">
@@ -56,6 +200,29 @@ function Step4() {
           Empieza a ahorrar y comienza a tener un impacto positivo 
           en el medio ambiente. Obtén un presupuesto gratuito.
         </p>
+        {calculos.categoria && (
+          <div className="step4-panel-category">
+            <h4>Categoría de panel seleccionada:</h4>
+            <div className="step4-category-details">
+              <div className="category-detail-item">
+                <span className="category-label">Potencia:</span>
+                <span className="category-value">{calculos.categoria.potencia}W</span>
+              </div>
+              <div className="category-detail-item">
+                <span className="category-label">Tamaño:</span>
+                <span className="category-value">{calculos.categoria.tamaño}</span>
+              </div>
+              <div className="category-detail-item">
+                <span className="category-label">Eficiencia:</span>
+                <span className="category-value">{(calculos.categoria.eficiencia * 100).toFixed(1)}%</span>
+              </div>
+              <div className="category-detail-item">
+                <span className="category-label">Precio unitario:</span>
+                <span className="category-value">{formatARS(calculos.categoria.precio)}</span>
+              </div>
+            </div>
+          </div>
+        )}
         <Link to="/simulador" className="step4-change-link">
           CAMBIAR TU SIMULACIÓN &gt;
         </Link>

@@ -11,7 +11,7 @@ function Step2() {
 
   const navigate = useNavigate();
 
-  const handleBack = () => navigate("/step1");
+  const handleBack = () => navigate("/simulador");
   const handleNext = () => {
     const data = { activeTab, gastoKwh, superficie, periodo };
     console.log("Datos del Paso 2:", data);
@@ -25,6 +25,8 @@ function Step2() {
       return;
     }
 
+    // Guardar datos en localStorage
+    localStorage.setItem('step2Data', JSON.stringify(data));
     navigate("/step3", { state: { step2Data: data } });
   };
 
@@ -64,11 +66,18 @@ function Step2() {
                 <label htmlFor="gasto-kwh">Gasto medio</label>
                 <div className="input-with-unit">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     id="gasto-kwh"
                     placeholder="Ej: 350"
                     value={gastoKwh}
-                    onChange={(e) => setGastoKwh(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Permitir solo números y punto decimal
+                      if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                        setGastoKwh(value);
+                      }
+                    }}
                   />
                   <span className="input-unit">kWh</span>
                 </div>
@@ -78,11 +87,18 @@ function Step2() {
                 <label htmlFor="superficie">Superficie disponible</label>
                 <div className="input-with-unit">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     id="superficie"
                     placeholder="Ej: 100"
                     value={superficie}
-                    onChange={(e) => setSuperficie(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Permitir solo números y punto decimal
+                      if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                        setSuperficie(value);
+                      }
+                    }}
                   />
                   <span className="input-unit">m²</span>
                 </div>
@@ -134,11 +150,18 @@ function Step2() {
                 <label htmlFor="superficie-no-sabe">Superficie disponible</label>
                 <div className="input-with-unit">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     id="superficie-no-sabe"
                     placeholder="Ej: 100"
                     value={superficie}
-                    onChange={(e) => setSuperficie(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Permitir solo números y punto decimal
+                      if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                        setSuperficie(value);
+                      }
+                    }}
                   />
                   <span className="input-unit">m²</span>
                 </div>

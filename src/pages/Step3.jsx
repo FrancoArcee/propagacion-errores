@@ -1,45 +1,51 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './styles/Step3.css';
 import { StepSideBar } from '../components/StepSideBar';
 
 function Step3() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('sabe'); 
   const [gastoArs, setGastoArs] = useState('');
   const [periodo, setPeriodo] = useState('mensual');
   const [incluyeIva, setIncluyeIva] = useState(true);
 
-  // Memoiza el objeto con los datos actuales
-  const step3Data = useMemo(() => ({
-    activeTab,
-    gastoArs,
-    periodo,
-    incluyeIva
-  }), [activeTab, gastoArs, periodo, incluyeIva]);
+  // Guardar en localStorage solo cuando se hace clic en CALCULAR
+  // No guardar en cada cambio para evitar interferencias con los inputs
 
-  // Guardar en localStorage cada vez que step3Data cambie
-  useEffect(() => {
+  const handleBack = () => {
+    navigate('/step1');
+  };
+
+  const handleNext = () => {
+    if (activeTab === 'sabe' && !gastoArs) {
+      alert("Por favor, completa tu gasto.");
+      return;
+    }
+    
+    // Guardar datos en localStorage antes de navegar
     try {
-      // Obtiene datos anteriores de localStorage
       const existingData = JSON.parse(localStorage.getItem('appCache')) || {};
-
-      // Combina datos previos con los de este paso
+      const step3Data = {
+        activeTab,
+        gastoArs,
+        periodo,
+        incluyeIva
+      };
+      
       const newData = {
         ...existingData,
         step3: step3Data
       };
-
+      
       localStorage.setItem('appCache', JSON.stringify(newData));
+      console.log("Datos del Paso 3 guardados en localStorage:", step3Data);
     } catch (error) {
       console.error('Error guardando en localStorage', error);
     }
-  }, [step3Data]);
-
-  const handleNext = () => {
-    if (activeTab === 'sabe' && !gastoArs) {
-      console.warn("Por favor, completa tu gasto.");
-      return;
-    }
-    console.log("Datos del Paso 3 guardados en localStorage:", step3Data);
+    
+    // Navegar a Step4 para mostrar los resultados
+    navigate('/step4');
   };
 
   return (
@@ -188,7 +194,7 @@ function Step3() {
 
         {/* Botones */}
         <div className="step3-nav-buttons">
-          <button className="step3-btn-secondary" onClick={() => console.log('Volver')}>
+          <button className="step3-btn-secondary" onClick={handleBack}>
             VOLVER
           </button>
           <button className="step3-intro-btn" onClick={handleNext}>
@@ -199,7 +205,5 @@ function Step3() {
     </div>
   );
 }
-
-console.log(JSON.parse(localStorage.getItem('appCache')));
 
 export default Step3;

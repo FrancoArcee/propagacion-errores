@@ -62,6 +62,55 @@
   color: var(--accent-yellow);
 }
 
+/* CATEGORÍA DE PANEL */
+.step4-panel-category {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.step4-panel-category h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-white);
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+.step4-category-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.category-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.category-detail-item:last-child {
+  border-bottom: none;
+}
+
+.category-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.category-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-white);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
 /* COLUMNA DERECHA */
 .step4-right {
   flex-basis: 50%;
@@ -73,12 +122,28 @@
 /* CARD FLOTANTE PEQUEÑA */
 .system-card {
   background: white;
-  border-radius: 40px;
-  padding: 1.5rem;
-  max-width: 500px;
+  border-radius: 24px;
+  padding: 2rem;
+  max-width: 550px;
   width: 100%;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
   margin: 80px 20px;
+}
+
+.system-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.system-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+  margin-top: 1.5rem;
 }
 
 /* GRID DE ESTADÍSTICAS */
@@ -89,26 +154,40 @@
   margin-bottom: 1.5rem;
 }
 .stat-card {
-  background-color: rgba(255,255,255,0.95);
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: 12px;
+  padding: 1.2rem;
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 .stat-card-icon {
   flex-shrink: 0;
   color: var(--primary-green);
 }
+.stat-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
 .stat-card-value {
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--text-dark);
 }
 .stat-card-label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 /* TIMELINE */

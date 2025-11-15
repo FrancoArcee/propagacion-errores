@@ -131,6 +131,8 @@ body {
   border: 2px solid var(--border-color);
   border-radius: 10px;
   transition: border-color 0.3s;
+  color: var(--text-dark);
+  background-color: var(--bg-light);
 }
 
 .input-with-unit input:focus {
