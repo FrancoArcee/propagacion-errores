@@ -144,8 +144,16 @@ function Step4() {
   }, []);
 
   const minAnos = 0;
-  const maxAnos = 8;
-  const recoveryPercent = calculos ? (calculos.periodoRecuperacion / maxAnos) * 100 : 0;
+  // Calcular maxAnos dinámicamente basado en el período de recuperación
+  // Si es mayor que 8, usar ese valor redondeado hacia arriba a múltiplos de 2, con un mínimo de 8
+  const maxAnos = calculos && calculos.periodoRecuperacion > 8
+    ? Math.ceil(calculos.periodoRecuperacion / 2) * 2  // Redondear al siguiente múltiplo par
+    : 8;
+  
+  // Asegurar que el porcentaje no exceda 100% (limitar la posición del marcador)
+  const recoveryPercent = calculos 
+    ? Math.min((calculos.periodoRecuperacion / maxAnos) * 100, 100) 
+    : 0;
 
   if (loading) {
     return (
