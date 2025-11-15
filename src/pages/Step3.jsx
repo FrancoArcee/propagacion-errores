@@ -7,14 +7,13 @@ function Step3() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('sabe'); 
   const [gastoArs, setGastoArs] = useState('');
-  const [periodo, setPeriodo] = useState('mensual');
   const [incluyeIva, setIncluyeIva] = useState(true);
 
   // Guardar en localStorage solo cuando se hace clic en CALCULAR
   // No guardar en cada cambio para evitar interferencias con los inputs
 
   const handleBack = () => {
-    navigate('/step1');
+    navigate('/step2');
   };
 
   const handleNext = () => {
@@ -29,7 +28,7 @@ function Step3() {
       const step3Data = {
         activeTab,
         gastoArs,
-        periodo,
+        periodo: 'mensual',
         incluyeIva
       };
       
@@ -94,89 +93,35 @@ function Step3() {
                 </div>
               </div>
 
-              <div className="step3-form-columns">
-                {/* Período */}
-                <div className="step3-form-group">
-                  <label>Período de referencia</label>
-                  <div className="step3-radio-options">
-                    <div className="step3-form-check">
-                      <input
-                        className="step3-form-check-input"
-                        type="radio"
-                        name="periodo"
-                        id="periodoAnual"
-                        value="anual"
-                        checked={periodo === 'anual'}
-                        onChange={(e) => setPeriodo(e.target.value)}
-                      />
-                      <label className="step3-form-check-label" htmlFor="periodoAnual">
-                        Anual
-                      </label>
-                    </div>
-
-                    <div className="step3-form-check">
-                      <input
-                        className="step3-form-check-input"
-                        type="radio"
-                        name="periodo"
-                        id="periodoBimesual"
-                        value="bi-mesual"
-                        checked={periodo === 'bi-mesual'}
-                        onChange={(e) => setPeriodo(e.target.value)}
-                      />
-                      <label className="step3-form-check-label" htmlFor="periodoBimesual">
-                        Bi-mesual
-                      </label>
-                    </div>
-
-                    <div className="step3-form-check">
-                      <input
-                        className="step3-form-check-input"
-                        type="radio"
-                        name="periodo"
-                        id="periodoMensual"
-                        value="mensual"
-                        checked={periodo === 'mensual'}
-                        onChange={(e) => setPeriodo(e.target.value)}
-                      />
-                      <label className="step3-form-check-label" htmlFor="periodoMensual">
-                        Mensual
-                      </label>
-                    </div>
+              <div className="step3-form-group">
+                <label>La cantidad indicada</label>
+                <div className="step3-radio-options">
+                  <div className="step3-form-check">
+                    <input
+                      className="step3-form-check-input"
+                      type="radio"
+                      name="iva"
+                      id="ivaIncluye"
+                      checked={incluyeIva === true}
+                      onChange={() => setIncluyeIva(true)}
+                    />
+                    <label className="step3-form-check-label" htmlFor="ivaIncluye">
+                      Incluye IVA
+                    </label>
                   </div>
-                </div>
 
-                {/* IVA */}
-                <div className="step3-form-group">
-                  <label>La cantidad indicada</label>
-                  <div className="step3-radio-options">
-                    <div className="step3-form-check">
-                      <input
-                        className="step3-form-check-input"
-                        type="radio"
-                        name="iva"
-                        id="ivaIncluye"
-                        checked={incluyeIva === true}
-                        onChange={() => setIncluyeIva(true)}
-                      />
-                      <label className="step3-form-check-label" htmlFor="ivaIncluye">
-                        Incluye IVA
-                      </label>
-                    </div>
-
-                    <div className="step3-form-check">
-                      <input
-                        className="step3-form-check-input"
-                        type="radio"
-                        name="iva"
-                        id="ivaNoIncluye"
-                        checked={incluyeIva === false}
-                        onChange={() => setIncluyeIva(false)}
-                      />
-                      <label className="step3-form-check-label" htmlFor="ivaNoIncluye">
-                        No incluye IVA
-                      </label>
-                    </div>
+                  <div className="step3-form-check">
+                    <input
+                      className="step3-form-check-input"
+                      type="radio"
+                      name="iva"
+                      id="ivaNoIncluye"
+                      checked={incluyeIva === false}
+                      onChange={() => setIncluyeIva(false)}
+                    />
+                    <label className="step3-form-check-label" htmlFor="ivaNoIncluye">
+                      No incluye IVA
+                    </label>
                   </div>
                 </div>
               </div>

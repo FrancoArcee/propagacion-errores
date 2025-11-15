@@ -8,14 +8,13 @@ function Step1() {
   const [activeTab, setActiveTab] = useState("sabe");
   const [gastoKwh, setGastoKwh] = useState("");
   const [superficie, setSuperficie] = useState("");
-  const [periodo, setPeriodo] = useState("mensual");
 
   const navigate = useNavigate();
 
-  const handleBack = () => navigate("/step1");
+  const handleBack = () => navigate("/simulador");
   
   const handleNext = () => {
-    const data = { activeTab, gastoKwh, superficie, periodo };
+    const data = { activeTab, gastoKwh, superficie, periodo: "mensual" };
     console.log("Datos del Paso 2:", data);
 
     if (activeTab === "sabe" && (!gastoKwh || !superficie)) {
@@ -118,41 +117,6 @@ function Step1() {
                     onChange={(e) => setSuperficie(e.target.value)}
                   />
                   <span className="input-unit">m²</span>
-                </div>
-              </div>
-
-              <div className="form-group radio-group">
-                <label>Período de referencia del gasto</label>
-                <div className="radio-options">
-                  <input
-                    type="radio"
-                    id="mensual"
-                    name="periodo"
-                    value="mensual"
-                    checked={periodo === "mensual"}
-                    onChange={(e) => setPeriodo(e.target.value)}
-                  />
-                  <label htmlFor="mensual">Mensual</label>
-
-                  <input
-                    type="radio"
-                    id="bi-mesual"
-                    name="periodo"
-                    value="bi-mesual"
-                    checked={periodo === "bi-mesual"}
-                    onChange={(e) => setPeriodo(e.target.value)}
-                  />
-                  <label htmlFor="bi-mesual">Bi-mesual</label>
-
-                  <input
-                    type="radio"
-                    id="anual"
-                    name="periodo"
-                    value="anual"
-                    checked={periodo === "anual"}
-                    onChange={(e) => setPeriodo(e.target.value)}
-                  />
-                  <label htmlFor="anual">Anual</label>
                 </div>
               </div>
             </div>

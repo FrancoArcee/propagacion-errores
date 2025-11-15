@@ -72,21 +72,13 @@ function Step4() {
       const step3Data = appCache.step3 || {};
       const locationData = JSON.parse(localStorage.getItem('selectedLocation')) || {};
 
-      // Obtener datos del paso 2
+      // Obtener datos del paso 2 (siempre mensual)
       const consumoMensual = parseFloat(step2Data.gastoKwh) || 0;
       const superficie = parseFloat(step2Data.superficie) || 0;
       
-      // Obtener datos del paso 3
+      // Obtener datos del paso 3 (siempre mensual)
       let costoMensual = parseFloat(step3Data.gastoArs) || 0;
-      const periodo = step3Data.periodo || 'mensual';
       const incluyeIva = step3Data.incluyeIva !== false; // default true
-
-      // Ajustar costo según período
-      if (periodo === 'anual') {
-        costoMensual = costoMensual / 12;
-      } else if (periodo === 'bi-mesual' || periodo === 'bi-mensual') {
-        costoMensual = costoMensual / 2;
-      }
 
       // Ajustar IVA si no está incluido (agregar 21%)
       if (!incluyeIva) {
