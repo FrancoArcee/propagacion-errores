@@ -1,12 +1,13 @@
 // Definición de categorías de paneles
-const PANEL_CATEGORIES = [
+export const PANEL_CATEGORIES = [
   {
     potencia: 250, // W
     ancho: 1.7, // m
     alto: 1.0, // m
     eficiencia: 0.147, // 14.7%
     precio: 150000, // $
-    nombre: '250W'
+    nombre: '250W',
+    imagen: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQXdfotcyOcrGhjt41IT5BrsgKYZLfD6MzrGL-EiGbVjX0lANG6THS43FNuafUTUDIRCUXTefhzjxTQj_Bk8RhM4nS3FcJz5rWDYvPtbTswbJpl33-mPrAp-JA' // URL de la imagen del panel
   },
   {
     potencia: 340, // W
@@ -14,7 +15,8 @@ const PANEL_CATEGORIES = [
     alto: 1.0, // m
     eficiencia: 0.17, // 17%
     precio: 210000, // $
-    nombre: '340W'
+    nombre: '340W',
+    imagen: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpjrL4V_h929GLnwNvdsUP2RWgFgNOGnl9uA&s' // URL de la imagen del panel
   },
   {
     potencia: 450, // W
@@ -22,7 +24,8 @@ const PANEL_CATEGORIES = [
     alto: 1.0, // m
     eficiencia: 0.22, // 22%
     precio: 250000, // $
-    nombre: '450W'
+    nombre: '450W',
+    imagen: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEkkE60Y1ElNR32vaWSPmcIi0RawVwZ4CH5w&s' // URL de la imagen del panel
   }
 ];
 
@@ -212,6 +215,11 @@ export function calcularFinal(parametros) {
   console.log('Número de paneles:', mejorCategoria.numeroPaneles);
   console.log('Costo total:', mejorCategoria.costoTotal, '$');
 
+  // Buscar la categoría completa en PANEL_CATEGORIES para obtener la imagen
+  const categoriaCompleta = PANEL_CATEGORIES.find(
+    cat => cat.nombre === mejorCategoria.categoria
+  );
+
   // Tiempo de recuperación (meses)
   const tiempoRecuperacionMeses =
     mejorCategoria.costoTotal / costoEnergeticoMensual;
@@ -237,7 +245,8 @@ export function calcularFinal(parametros) {
       potencia: mejorCategoria.potencia,
       precio: mejorCategoria.precio,
       eficiencia: mejorCategoria.eficiencia,
-      tamaño: mejorCategoria.tamaño
+      tamaño: mejorCategoria.tamaño,
+      imagen: categoriaCompleta?.imagen || ''
     },
     numeroPaneles: mejorCategoria.numeroPaneles,
     costoTotal: mejorCategoria.costoTotal,

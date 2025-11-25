@@ -97,6 +97,14 @@ export default function Header() {
           Simulador
         </NavLink>
 
+        <NavLink
+          to="/productos"
+          className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+          onClick={handleNavClick}
+        >
+          Productos
+        </NavLink>
+
         <button className="nav-link btn-nosotros" onClick={handleScrollToNosotros}>
           Nosotros
         </button>

@@ -216,22 +216,33 @@ function Step4() {
         {calculos.categoria && (
           <div className="step4-panel-category">
             <h4>Categoría de panel seleccionada:</h4>
-            <div className="step4-category-details">
-              <div className="category-detail-item">
-                <span className="category-label">Potencia:</span>
-                <span className="category-value">{calculos.categoria.potencia}W</span>
-              </div>
-              <div className="category-detail-item">
-                <span className="category-label">Tamaño:</span>
-                <span className="category-value">{calculos.categoria.tamaño}</span>
-              </div>
-              <div className="category-detail-item">
-                <span className="category-label">Eficiencia:</span>
-                <span className="category-value">{(calculos.categoria.eficiencia * 100).toFixed(1)}%</span>
-              </div>
-              <div className="category-detail-item">
-                <span className="category-label">Precio unitario:</span>
-                <span className="category-value">{formatARS(calculos.categoria.precio)}</span>
+            <div className="step4-panel-content">
+              {calculos.categoria.imagen && (
+                <div className="step4-panel-image-container">
+                  <img
+                    src={calculos.categoria.imagen}
+                    alt={`Panel Solar ${calculos.categoria.nombre}`}
+                    className="step4-panel-image"
+                  />
+                </div>
+              )}
+              <div className="step4-category-details">
+                <div className="category-detail-item">
+                  <span className="category-label">Potencia:</span>
+                  <span className="category-value">{calculos.categoria.potencia}W</span>
+                </div>
+                <div className="category-detail-item">
+                  <span className="category-label">Tamaño:</span>
+                  <span className="category-value">{calculos.categoria.tamaño}</span>
+                </div>
+                <div className="category-detail-item">
+                  <span className="category-label">Eficiencia:</span>
+                  <span className="category-value">{(calculos.categoria.eficiencia * 100).toFixed(1)}%</span>
+                </div>
+                <div className="category-detail-item">
+                  <span className="category-label">Precio unitario:</span>
+                  <span className="category-value">{formatARS(calculos.categoria.precio)}</span>
+                </div>
               </div>
             </div>
           </div>
